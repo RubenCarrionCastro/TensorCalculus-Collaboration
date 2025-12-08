@@ -1,0 +1,2235 @@
+\documentclass[11pt]{article}
+%\usepackage[spanish]{babel}
+\RequirePackage{etex}
+\usepackage[utf8]{inputenc}
+\usepackage{braket}
+%\usepackage[sc]{mathpazo}
+% \linespread{1.5}
+%\usepackage[T1]{fontenc}
+%\usepackage{heuristica}
+%\usepackage[erewhon,vvarbb,bigdelims]{newtxmath}
+%\renewcommand*\oldstylenums[1]{\textosf{#1}}
+\usepackage{enumitem}
+\usepackage{array}
+\usepackage{textcomp}
+\usepackage{fancyhdr}
+\usepackage{amsmath, amsthm}
+\usepackage{slashed}
+\usepackage[normalem]{ulem}
+\usepackage{amsfonts}
+\usepackage{amssymb}
+\usepackage{mathtools}
+\usepackage{float}
+\usepackage{soul}
+\usepackage{graphicx}
+\usepackage{hyperref}
+\usepackage{graphicx}
+\usepackage{pstricks-add}
+\usepackage{color}
+\usepackage{caption}
+\usepackage[margin=0.9in]{geometry}
+\usepackage{marvosym}
+\usepackage{mathtools}
+\usepackage{framed}
+\usepackage{calrsfs}
+\usepackage[mathscr]{euscript}
+\usepackage{tensor}
+\usepackage{autonum}
+\usepackage{cancel}
+\usepackage[most]{tcolorbox}
+
+\newtheorem{thm}{Teorema}[section]
+\newtheorem{theorem}{Teorema}[section]
+\newtheorem{proposition}[thm]{Proposición} 
+\newtheorem{lemma}[thm]{Lema}
+\newtheorem{corollary}[thm]{Corolario} 
+\newtheorem{conv}[thm]{Convención}
+\newtheorem{defi}[thm]{Definición}
+\newtheorem{definition}[theorem]{Definición}
+\newtheorem{notation}[thm]{Notación} 
+\newtheorem{exe}[thm]{Ejemplo}
+\newtheorem{conjecture}[thm]{Conjetura} 
+\newtheorem{prob}[thm]{Problema}
+\newtheorem{remark}[thm]{Observación}
+\newtheorem{example}[thm]{Ejemplo}
+\newtheorem{note}[thm]{Nota}
+
+\newcommand{\brackets}[1]{\left[#1\right]}
+\newcommand{\curlybraces}[1]{\left\{#1\right\}}
+\newcommand{\qedh}{\hfill\hspace{5mm}\fbox{\phantom{\rule{.5ex}{.5ex}}}}
+\newcommand{\scalar}[2]{\langle #1, #2 \rangle}
+\newcommand{\ptensor}[2]{#1 \otimes #2}
+\newcommand{\pcart}[2]{#1 \times #2}
+
+\newtcolorbox[auto counter, number within=section]{mytheorem}[2][]{
+  enhanced,
+  breakable,
+  title=Teorema~\thetcbcounter: #2,
+  #1,
+}
+\newtcolorbox[auto counter, number within=section]{propositionbox}[2][]{
+  enhanced,
+  breakable,
+  title=Proposition~\thetcbcounter: #2,
+  #1,
+}
+
+\newtcolorbox[auto counter, number within=section]{corollarybox}[2][]{
+  enhanced,
+  breakable,
+  title=Corollary~\thetcbcounter: #2,
+  #1,
+}
+
+\newtcolorbox[auto counter, number within=section]{remarkbox}[2][]{
+  enhanced,
+  breakable,
+  title=Remark~\thetcbcounter: #2,
+  #1,
+}
+
+\newtcolorbox[auto counter, number within=section]{notebox}[2][]{
+  enhanced,
+  breakable,
+  title=Note~\thetcbcounter: #2,
+  #1,
+}
+
+
+\newenvironment{Figura}
+  {\par\medskip\noindent\minipage{\linewidth}}
+  {\endminipage\par\medskip}
+
+\title{Notas Tensores}
+\date{Junio, 2024}
+%\usepackage[spanish]{babel}
+\begin{document}
+\author{Jónatan Herrera\\
+Rubén Carrión Castro}
+\maketitle
+\tableofcontents
+\newpage
+\section{Preliminares}
+En esta sección hacemos un breve repaso a los conceptos básicos de álgebra lineal que necesitaremos para definir correctamente la noción de tensor.
+\subsection{Espacio vectorial}
+Comenzamos revisionando la noción de espacio vectorial.
+\begin{definition}
+Consideremos $V$ un conjunto y $\mathbb{K}$ un cuerpo. Supongamos que tenemos definidas una operación interna $+:V\times V\to V$ y una operación externa $\cdot:V\times\mathbb{K}\to V$. Diremos que $(V,\mathbb{K},+,\cdot)$ (o simplemente $(V,\mathbb{K})$) tiene \textbf{estructura de espacio vectorial} si se satisfacen las siguientes propiedades:
+    \begin{enumerate}[label=(\roman*)]
+        \item \label{def1:item1} $(V,+)$ es un grupo abeliano, es decir:
+        \begin{enumerate}[label=\ref{def1:item1}-\arabic*)]
+            \item Se cumple que $+:V\times V\to V$ es una operación cerrada, es decir, $\forall v,w\in V$ se tiene que $v+w\in V$.
+            \item Propiedad asociativa:
+            \[\forall u,v,w\in V,\hspace{3mm}u+(v+w)=(u+v)+w\]
+            \item Existe el elemento neutro:
+            \[\forall v\in V,\exists0\in V;\hspace{3mm}v+0=0+v=v\]
+            \item Existe elemento simétrico:
+            \[\forall v\in V,\exists-v\in V;\hspace{3mm}v+(-v)=(-v)+v=0\]
+            \item Propiedad conmutativa:
+            \[\forall v,w\in V;\hspace{3mm}v+w=w+v\]
+        \end{enumerate}
+         
+        \item \label{def1:item2} \textit{Doble propiedad distributiva}:
+        \begin{enumerate}[label=\ref{def1:item2}-\arabic*)]
+            \item $\forall\lambda,\mu\in\mathbb{K}$, $\forall v\in V;\hspace{3mm} (\lambda+\mu)\cdot v=(\lambda\cdot v)+(\mu\cdot v)$
+            \item $\forall\lambda\in\mathbb{K}$, $\forall v,w\in V;\hspace{3mm} \lambda\cdot(v+w)=(\lambda\cdot v)+(\lambda\cdot w)$
+        \end{enumerate}
+        \item \textit{Propiedad pseudo-asociativa}: 
+        \[\forall\lambda,\mu\in\mathbb{K},\forall v\in V;\hspace{3mm}\lambda\cdot(\mu\cdot v)=(\lambda\cdot\mu)\cdot v\]
+        \item Se verifica que:
+        \[\forall v\in V;\hspace{3mm}1\cdot v=v\cdot 1=v,\text{ donde }1\in\mathbb{K}\text{ es el elemento unitario de }\mathbb{K}\]
+    \end{enumerate}
+\end{definition}
+\noindent Los elementos del espacio vectorial suelen denominarse \textbf{vectores} mientras que a los del cuerpo $\mathbb{K}$, los llamaremos \textbf{escalares}. La operación externa recibe el nombre de \textbf{producto por escalares}.
+\\
+\noindent El siguiente concepto que necesitaremos sobre un espacio vectorial es la noción de dimensión. Para poder definir dicha noción, requerimos dos conceptos adicionales: la noción de sistema generador y de lineal dependencia/independencia. El primero nos permite establecer cuando un conjunto de vectores genera todo el espacio vectorial. Esto quiere decir, que todo vector $v\in V$ puede expresarse como \textbf{combinación lineal} de los vectores de mi sistema generador, los cuáles pueden ser \textbf{linealmente dependientes o independientes} entre ellos mismos, recalcando el caso particular de que sean independientes. Veamos una definición más formal.
+
+\begin{definition}
+    Sea $V$ un $\mathbb{K}$-espacio vectorial y sean $v_1,v_2,\dots,v_n\in V$:
+    \begin{itemize}
+    \item Se dice que $\curlybraces{v_1,v_2,\dots,v_n}$ es un conjunto generador si $<\curlybraces{v_1,v_2\dots,v_n}>=V$.
+    \item Se dice que $v_1,v_2,\dots,v_n$ son linealmente independientes si\\ $\lambda^1\cdot v_1+\lambda^2\cdot v_2+\dots \lambda^n\cdot v_n=0$ con $\lambda^i\in\mathbb{K}$, si y solo si $\lambda^1=\lambda^2=\dots=\lambda^n=0$.
+    \item Se dice que $\curlybraces{v_1,v_2,\dots,v_n}$ es una base si es a la vez conjunto generador y los vectores son linealmente independientes.
+    \end{itemize}
+\end{definition}
+
+\noindent Una vez obtenido el concepto de base, podemos ir ya al concepto de dimensión del espacio vectorial.
+
+\begin{definition}
+    Se llama dimensión de un espacio vectorial al cardinal de cualquiera de sus bases, es decir, $dimG=\# B_G$.
+\end{definition}
+
+\subsection{Aplicaciones lineales}
+Veamos ahora las aplicaciones lineales.
+\begin{definition}
+    Sean $V$ y $V'$ dos espacios vectoriales sobre el mismo cuerpo $\mathbb{K}$.
+    Se dice que en una aplicación $f:V\longrightarrow V'$ es una aplicación lineal, o también llamado homomorfismo de espacios vectoriales, si se verifica:
+    \begin{enumerate}[label=(\roman*)]
+        \item $f(x+y)=f(x)+f(y),\forall x,y\in V$
+        \item $f(\lambda\cdot x)=\lambda\cdot f(x),\forall\lambda\in\mathbb{K},\forall x\in V$
+    \end{enumerate}
+    Diremos además que $f$ es un isomorfismo lineal si es biyectiva, que $f$ es un endomorfismo si $V=V'$ y que es un automorfismo si es un endomorfismo biyectivo. 
+\end{definition}
+
+\noindent Las aplicaciones lineales tienen asociados dos conjuntos cuyas características son de interés, a saber, el núcleo y la imagen.
+
+\begin{definition}
+    Sea $f:V\longrightarrow W$ definimos el núcleo o kernel de la aplicación $f$ como
+    \[Kerf=\curlybraces{v\in V:f(v)=0}\]
+    y la imagen como
+    \[Imf=\curlybraces{w\in W:\exists v\in V/f(v)=w}.\]
+\end{definition}
+
+%\begin{proposition}
+    %Sea $f:V\longrightarrow V'$ una aplicación lineal, entonces:
+    %\begin{enumerate}[label=(\roman*)]
+        %\item $f(0)=0$
+        %\begin{proof}
+        %\[f(0)=f(0\cdot x)=0\cdot f(x)=0,\forall x\in V\]
+        %\end{proof}
+        %\item $f(-x)=-f(x)$
+        %\begin{proof}
+            %\[f(-x)=f((-1)\cdot x)=-1\cdot f(x)=-f(x),\forall %x\in V\]
+        %\end{proof}
+        %\item $f(x-y)=f(x)-f(y),\forall x,y\in V$
+        %\begin{proof}
+            %\[f(x-y)=f(x+(-1)\cdot y)=f(x)+f((-1)\cdot y)=f(x)-%f(y),\forall x,y\in V\]
+        %\end{proof}
+        %\item Si $U\leq V\Rightarrow f(u)\leq V'$
+        %\begin{proof}
+            %\[f(u)=\curlybraces{f(x):x\in U};U\leq V\]
+            %$    \forall x,y\in U, x+y\in U \hspace{4mm}
+             %   \forall\lambda\in\mathbb{K},\lambda\cdot x\in U
+            %, f(u)\leq V'$\\
+            %Sea $x,y\in f(u)\Leftrightarrow f(x),f(y)\in U, %f(x+y)=f(x)+f(y)\in U$\\
+
+            %Sea $\lambda\in\mathbb{K}$, sea $x\in %f(u)\Leftrightarrow f(x)\in U$, $f(\lambda\cdot %x)=\lambda\cdot f(x)\in U$
+        %\end{proof}
+        %\item Si $U'\leq V'\Rightarrow f^{-1}(U)\leq V$
+        %\begin{proof}
+            %\[f^{-1}(U')=\curlybraces{x\in V:f(x)=u'}\]
+            %\[U'\leq V:\forall x,y\in U',x+y\in %U',\forall\lambda\in\mathbb{K},\lambda\cdot x\in %U'\]
+            %\[f^{-1}(u')\leq V\]
+            %Sea $x,y\in f^{-1}(u')\Leftrightarrow f(x),f(y)\in %U'$\\
+
+            %$f(x+y)=f(x)+f(y)\in U'$\\
+
+            %Sea $\lambda\in\mathbb{K}$, sea $x\in f^{-1}%(U')\Leftrightarrow f(x)\in U'$, $f(\lambda\cdot %x)=\lambda\cdot f(x)\in U'$
+  %      \end{proof}
+ %   \end{enumerate}
+%\end{proposition}
+
+\noindent Veamos algunas propiedades básicas de ambos conjuntos.
+
+\begin{proposition}
+Sea $f:V\to V'$ una aplicación lineal, se tienen las siguientes propiedades:
+\begin{enumerate}[label=(\roman*)]
+    \item \label{prop1:item1} $\rm{Im}f$ es un subespacio de $V'$ y que $\rm{Ker}f$ es un subespacio de $V$.
+    \item \label{prop1:item2}Si $W$ es un subespacio vectorial de $V$, entonces $f(W):=\curlybraces{f(w): w\in W}$ es un subespacio de $V'$.
+    \item \label{prop1:item3}Si $W'$ es un subespacio de $V'$, entonces $f^{-1}(W'):=\curlybraces{v\in V: f(v)\in W'}$ es también un subespacio de $V$.
+\end{enumerate}  
+\end{proposition}
+%\newpage
+\begin{proof}
+\begin{enumerate}[label=\ref{prop1:item1}]
+    \item Por definición, como los elementos de la $\rm{Im}f$ son pertenecientes a $V'$, entonces la $\rm{Im}f$ es subespacio de $V'$. De igual forma ocurre con el $\rm{Ker}f$, pues sus elementos pertenecen a $V$ y por tanto, este es subespacio de $V$.
+\end{enumerate}
+\begin{enumerate}[label=\ref{prop1:item2}]
+    \item Como $W$ es subespacio de $V$, tenemos que $w\in V$ también, por tanto, los $f(w)$ pertenecerán a $V'$, cosa que implica que $f(W)$ es subespacio de $V'$, pues los $f(w)$ de $f(W)$ pertenecen a $V'$.
+\end{enumerate}
+\begin{enumerate}[label=\ref{prop1:item3}]
+    \item Por analogía a $\ref{prop1:item2}$ vemos que $f^{-1}(W)$ es subespacio de $V$.
+\end{enumerate}
+\end{proof}
+\noindent Ahora veamos algunas propiedades esenciales de las aplicaciones lineaales.
+\begin{proposition}
+    Sea $f:V\longrightarrow V'$ una aplicación lineal,
+    \begin{enumerate}[label=(\roman*)]
+        \item \label{pro1:item1} entonces $f$ es inyectiva si y solo si $Kerf=\curlybraces{0}$.
+        \item \label{pro1:item2} si $G$ es un conjunto generador de $V$, $<G>=V$, entonces $f(G)$ es conjunto generador
+        de $Imf$, $<f(G)>=Imf$.
+        \item \label{pro1:item3} si $S\subset V$ es un conjunto de vectores linealmente independientes, si $f$ es inyectiva, entonces $f(S)$ es linealmente independiente.
+        \item \label{pro1:item4} $f$ es inyectiva $\Leftrightarrow$ conserva la independencia lineal.
+   
+        \item \label{pro1:item5} si $f$ es biyectiva y $B$ es una base de $V$, entonces $f(B)$ es base de $V'$.
+
+        \item \label{pro1:item6} $f$ es sobreyectiva $\Leftrightarrow$ $Imf=V'$
+    \end{enumerate}
+\end{proposition}
+
+
+
+\begin{proof}
+\ref{pro1:item1} \begin{tabular}{c|}
+                 $\Rightarrow$ \\ \hline
+            \end{tabular}
+            Suponiendo que $f$ es inyectiva, sabemos que su Kernel es,
+            \[Ker f=\curlybraces{v\in V:f(v)=0}\]
+            pero como la inyectividad nos implica que la imagen debe provenir de un único vector de entrada, entonces este vector será $v=0$, y por tanto, $ker f=\curlybraces{0}$. $\checkmark$
+\\     
+            \begin{tabular}{c|}
+                 $\Leftarrow$  \\ \hline
+            \end{tabular}
+            Suponiendo que $ker f=\curlybraces{0}$, esto nos quiere decir que únicamente el vector $v=0$ satisface $f(v)=0$, luego como un vector tiene una única imagen, decimos que $f$ es inyectiva. \qedh
+\\ \\
+\ref{pro1:item2}  Veamos que el conjunto $f(G)$ es sistema generador de la imagen, es decir,   \[<f(G)>=Imf\Leftrightarrow\forall y\in Imf,\exists\lambda^1,\dots,\lambda^n\in\mathbb{K},y_1,\dots,y_n\in f(G)\text{ tales que }y=\lambda^1y_1+\dots+\lambda^ny_n.\] Sabemos que $G$ es conjunto generador, luego sea $y\in Imf$. Entonces por definición se tiene que existe $x\in V$ tal que $f(x)=y$. Como $<G>=V$, existen $\lambda^1,\dots,\lambda^n\in\mathbb{K}$, $v_1,\dots,v_n\in G$ tales que \[ x= \sum_{i=1}^n \lambda^i v_i.\] Tenemos entonces que:  \[y=f(x)=f(\lambda^1v_1+\dots+\lambda^nv_n)=\lambda^1f(v_1)+\dots+\lambda^nf(v_n).\] Por lo tanto, $y$ es combinación lineal de elementos de $f(G)$, es decir, $<f(G)>=\mathrm{Im}f$. \qedh
+\\ \\
+\ref{pro1:item3}
+            Sea $S$ un conjunto linealmente independiente en $V$. 
+            Supongamos que $f$ es inyectiva, vamos a probar que $f(S)$ es linealmente independiente, es decir,
+            \[\lambda^1y_1+\dots+\lambda^ny_n=0\Rightarrow\lambda^1=\lambda^2=\dots=\lambda^n=0\hspace{4mm} \forall y_1,\dots,y_n\in f(S),\hspace{2mm}
+                \forall\lambda^1,\dots,\lambda^n\in\mathbb{K}\]
+            Supongamos $\lambda^1y_1+\dots+\lambda^ny_n=0$.  Como $y_j\in f(S),\exists x_j\in S/f(x_j)=y_j$.
+             \[\left.\begin{array}{r}
+                \lambda_1f(x_1)+\dots+\lambda_nf(x_n)=0\\
+                f(\lambda_1x_1+\dots+\lambda_nx_n)=0
+            \end{array}\right\rbrace f(0)=0\Rightarrow\lambda_1x_1+\dots+\lambda_nx_n=0\Rightarrow f\text{ inyectiva}\Rightarrow\lambda_1=\dots=\lambda_n=0\]
+                \\ \\
+                \ref{pro1:item4} \begin{tabular}{c|}
+                 $\Longrightarrow$ \\ \hline
+            \end{tabular} 
+            Trivial por (iii) $\checkmark$\\
+            \begin{tabular}{c|}
+                 $\Longleftarrow$ \\ \hline
+            \end{tabular} 
+            Por reducción al absurdo:\\
+            Supongamos que existen $v_1,v_2\in V$ distintos, tales que $f(v_1)=f(v_2)\Leftrightarrow f(v_1)-f(v_2)=0\Leftrightarrow f(v_1-v_2)=0$. 
+            Luego, $v=v_1-v_2\neq0$ verifica que $f(v)=0$, $\curlybraces{v}$ es un conjunto linealmente independiente, $f(\curlybraces{v})$ tendría que ser un conjunto l.i. por hipótesis, pero $f(\curlybraces{v})=\curlybraces{0}$ que no es un conjunto l.i. cosa absurda. \qedh
+            \\ \\
+            \ref{pro1:item5}  Sea una aplicación lineal biyectiva $f:V\to V'$
+            y una base de $V$, $B=\curlybraces{v_1,\dots,v_n}$. Entones, si aplicamos
+\[f(B)=\curlybraces{f(v_1),\dots,f(v_n)}=\curlybraces{v_1',\dots,v_n'}\]
+            y entonces, estos $v_i'\in V'$ van a formar una base de $V'$, pues al ser $f$ biyectiva, los vectores serán linealmente independientes, pues los de $B$ lo son; y además, como tienen la misma dimensión que $V'$, pasan de ser conjunto generador a base. $\qedh$
+            \\ \\
+            \ref{pro1:item6} \begin{tabular}{c|}
+                 $\Rightarrow$  \\ \hline
+            \end{tabular}
+            Suponiendo que $f$ es sobreyectiva, tendremos que para cada $y\in V'$, existe al menos un $x\in V$, tal que $f(x)=y$. Por consiguiente, cada elemento de $V'$ es la imagen de un elemento de $V$, es decir, $Imf=V'$. $\checkmark$\\
+            \begin{tabular}{c|}
+                 $\Leftarrow$  \\ \hline
+            \end{tabular}
+            Suponiendo que $imf=V'$, tenemos que todos los elementos de $V'$ son imagen de los elementos de $V$, siendo esta la propia definición de sobreyectividad, luego $f$ es sobreyectiva.
+\end{proof}
+\noindent Una vez visto estas propiedades, de $\ref{pro1:item5}$ podemos obtener un resultado interesante, que es la siguiente proposición.
+\begin{proposition}
+Sea $B=\curlybraces{v_1,\dots,v_n}$ una base de $V$, y sea $f:V\rightarrow V'$ una aplicación lineal. Se tiene entonces que $\curlybraces{f(v_1),\dots,f(v_n)}$ es un sistema generador de la imagen.
+\end{proposition}
+\begin{proof}
+    Supongamos que $B$ es una base y que conocemos $f(v_j),\forall v_j\in B$. 
+    Sea $v\in V$, escrito en coordenadas de la base como $v=\lambda^1v_1+\dots+\lambda^nv_n$, con $v_i\in B$, 
+ y $\lambda^i\in\mathbb{K}$, entonces  $f(x)=f(\lambda^1v_1+\dots+\lambda^nv_n)=\lambda^1f(v_1)+\dots\lambda^nf(v_n)$, luego hemos puesto $f(x)$ en coordenadas de $\curlybraces{f(v_1,\dots,f(v_n)}$.
+\end{proof}
+
+\noindent Ahora vamos a ver un resultado bastante importante, el cuál nos permitirá representar aplicaciones lineales en matrices, denominadas \textbf{matrices asociadas a la aplicación $f$}. Además, este resultado es importante para Física, pues los físicos no solemos trabajar con aplicaciones, sino que trabajamos con sus matrices asociadas, pues se puede decir que "tienen" la misma información que las aplicaciones.
+
+\begin{proposition}  \label{prop1.4}
+    Sean $(V,+,\cdot)$ y $(V',+,\cdot)$ $\mathbb{K}$-espacios vectoriales de dimensión finita con $dimV=n$ y $dimV'=m$. 
+    Sea $f:V\longrightarrow V'$ una aplicación lineal, entonces dadas $\left\lbrace\begin{matrix}
+        B=\curlybraces{v_1,\dots,v_n}\text{ base de }V\\
+        B'=\curlybraces{v_1',\dots,v_n'}\text{ base de }V'
+    \end{matrix}\right.$\\
+    $f$ se representa en esas bases como una matriz en $\mathcal{M}_{m\times n}(\mathbb{K})$.
+\end{proposition}
+
+\begin{proof}
+    Como $f$ es lineal, me basta con conocer $f(B)$, para ello, tenemos que conocer $f(v_1),f(v_2),\dots,f(v_n)$, teniendo:
+    \[\begin{matrix}
+        f(v_1) & = & a_{1}^1v_1'+a_{1}^2v_2'+\dots+a_{1}^mv_m', & a_{1}^i\in\mathbb{K}\\
+        f(v_2) & = & a_{2}^1v_1'+a_{2}^2v_2'+\dots+a_{2}^mv_m', & a_{2}^i\in\mathbb{K}\\
+        \vdots & & \vdots & \vdots\\
+        f(v_n) & = & a_{n}^1v_1'+a_{n}^2v_2'+\dots+a_{n}^mv_m', & a_{n}^i\in\mathbb{K}
+    \end{matrix}\]
+    Sea $v\in V:v=\lambda^1v_1+\dots+\lambda^nv_n,\hspace{2mm}\lambda^i\in\mathbb{K}$, si le aplicamos $f$ tenemos,
+    \[\begin{array}{rll}
+        f(v) & = &\lambda^1f(v_1)+\dots+\lambda^nf(v_n) \\
+         & = & \lambda^1(a_{1}^1v_1'+\dots+a_{1}^mv_m')+\lambda^2(a_{2}^1v_1'+\dots+a_{2}^mv_m')+\dots+\lambda^n(a_{n}^1v_1'+\dots+a_{n}^mv_m')\\
+         & = & (a_{1}^1\lambda^1+a_{2}^1\lambda^2+\dots+a_{n}^1\lambda^n)v_1'+(a_{1}^2\lambda^1+\dots+a_{n}^2\lambda^n)v_2'+\dots+(a_{1}^m\lambda^1+\dots+a_{n}^m\lambda^n)v_m'
+    \end{array}
+        \]
+   Luego,  $f(v)=\mu^1v_1'+\mu^2v_2'+\dots+\mu^mv_m'$, siendo $\mu^i=(a_{1}^i\lambda^1+\dots+a_{n}^i\lambda^n)$, luego, para construir la matriz $A$, ponemos las coordenadas de $v_1$ en la primera columna, las de $v_2$ en la segunda y así sucesivamente, tal que:
+    \[\begin{pmatrix}
+        \mu^1\\
+        \mu^2\\
+        \vdots\\
+        \mu^m
+    \end{pmatrix}=\begin{pmatrix}
+        a_{1}^1 & a_{1}^1 & \dots & a_{1}^m\\
+        a_{2}^1 & a_{2}^2 & \dots & a_{2}^m\\
+        \vdots & \vdots & \ddots & \vdots\\
+        a_{n}^1 & a_{n}^2 & \dots & a_{n}^m
+    \end{pmatrix}\begin{pmatrix}
+        \lambda^1\\
+        \lambda^2\\
+        \vdots\\
+        \lambda^n
+    \end{pmatrix}\Rightarrow \mu=A\cdot\lambda\]
+\end{proof}
+
+\noindent Vamos a introducir ahora el concepto de \textbf{rango} de una aplicación lineal, que puede extenderse al rango de su matriz asociada.
+
+\begin{definition}
+    Se llama rango de una aplicación lineal (matriz) a la dimensión de su imagen y se denota por $rg()$.
+\end{definition}
+
+\noindent Como un mismo espacio vectorial puede estar generado por varias bases, es lógico pensar que debe haber una relación entre estas bases o al menos una forma de cambiar de una base a otra, lo que se conoce como \textbf{cambio de base}. Esto es posible y una forma sencilla de hacerlo es mediante las matrices asociadas.
+
+\begin{proposition}
+    -Sean $V$ y $V'$ dos espacios vectoriales en $\mathbb{K}$, sea $f:V\longrightarrow V'$ lineal.\\
+    -Sea $B_1=\curlybraces{v_1,\dots,v_n}$ base de $V$, $B_1'=\curlybraces{v_1',\dots,v_m'}$ base de $V'$.\\
+    -Sea $A\in\mathcal{M}_{m\times n}(\mathbb{K})$ la matriz que representa a $f$ en $B_1,B_1'$.\\
+    -Sea $B_2=\curlybraces{u_1,\dots,u_n}$ base de $V$, $B_2'=\curlybraces{u_1',\dots,u_m'}$ base de $V'$.\\
+    -Sea $\tilde{A}\in\mathcal{M}_{m\times n}(\mathbb{K})$ la matriz que representa a $f$ en $B_2,B_2'$.\\
+    -Sea $P$ la matriz de cambio de base de $B_1$ en $B_2$.\\
+    -Sea $Q$ la matriz de cambio de base de $B_1'$ en $B_2'$.\\
+    Entonces $\tilde{A}=Q^{-1}\cdot A\cdot P$.
+\end{proposition}
+\begin{proof}
+    Sea $f:V\to V'$ una aplicación lineal con $n=dim V$ y $m=dim V'$. Si $A$ y $\tilde{A}$ son las matrices asociadas a $f$ respecto de distintas bases, entonces
+    \[rg(A)=dim(Imf)=rg(\tilde{A})\]
+    Luego $A$ y $\Tilde{A}$ tienen igual rango, y por tanto, son matrices equivalentes. Concretemos más esta situación:\\
+    Sean $B_1$ y $B_2$ bases de $V$ con cambio de base de $B_1$ a $B_2$ dado por $X_1=PX_2$ y sean $B_1'$ y $B_2'$ bases de $V'$, con cambio de $B_1'$ a $B_2'$ dado por $Y_1=QY_2$.\\
+    Consideremos la matriz asociada a $f$ respecto de $B_1$ y $B_1'$, $A\in\mathcal{M}_{m\times n}(\mathcal{K})$, tal que $A=\mathcal{M}_{B_1,B_1'}(f)$ y la ecuación matricial
+    \[Y_1=AX_1\]
+    De igual forma, sea $\tilde{A}\in\mathcal{M}_{m\times n}(\mathbb{K})$ la matriz asociada a $f$ respecto de $B_2$ y $B_2'$, tal que $\tilde{A}=\mathcal{M}_{B_2,B_2'}(\mathbb{K})$ y la ecuación matricial de $f$ respecto de estas bases,
+    \[Y_2=\tilde{A}X_2\]
+    Gráficamente,
+    \[\begin{matrix}
+    & V & \to & V' & \\
+            & & A & &\\
+            & B_1 & \longrightarrow & B_1' & \\
+            P & \uparrow & & \uparrow & Q\\
+             & & \tilde{A} & & \\
+             & B_2 & \longrightarrow & B_2' &
+        \end{matrix}\]
+        Entonces,
+        \[Y_2=\left\lbrace \begin{array}{l}
+        \tilde{A}X_2\\    Q^{-1}Y_1=Q^{-1}AX_1=Q^{-1}APX_2\end{array}\right.\]
+        y en consecuente,
+        \[\tilde{A}=Q^{-1}AP\]
+        O bien,
+        \[X_2=\left\lbrace\begin{array}{l}
+            \tilde{A}^{-1}Y_2\\
+            P^{-1}X_1=P^{-1}A^{-1}Y_1=P^{-1}A^{-1}QY_2
+        \end{array}\right.\]
+        y en consecuente,
+        \[\tilde{A}^{-1}=P^{-1}A^{-1}Q\]
+\end{proof}
+
+Ahora vamos a enunciar el \textbf{Primer Teorema de Isomorfía}, del que obtendremos un Corolario muy importante a la hora de trabajar con aplicaciones lineales. Este teorema no se va a demostrar (si se quiere ver la prueba consultar  \cite[Chapter 6, Theorem 6.5, Page 77]{IntroducciónTeoríaDeGrupos}). 
+
+\begin{theorem}[Primer teorema de isomorfismo de Noether]
+    Sea $f:V\longrightarrow V'$ una aplicación lineal, entonces:
+    \begin{enumerate}[label=(\roman*)]
+        \item Existe una aplicación lineal sobreyectiva $\pi:V\longrightarrow V/Kerf$
+        \item Existe un isomorfismo $\bar{f}:V/Kerf\longrightarrow Imf$
+        \item Existe una aplicación lineal inyectiva $i:Imf\longrightarrow V'$, tales que $f=i\circ\bar{f}\circ\pi$, tal que
+        \[\begin{matrix}
+            & & f & \\
+            & V & \longrightarrow & V' & \\
+            \pi & \downarrow & & \uparrow & i\\
+             & & \bar{f} & & \\
+             & V/Kerf & \longrightarrow & Imf &
+        \end{matrix}\]
+    \end{enumerate}
+   
+\end{theorem}
+\begin{corollary}
+     Si además $V$ es finitamente generado,
+    \[dimV=dim(Kerf)+dim(Imf)\]
+\end{corollary}
+
+\subsection{Espacio dual}
+\noindent Llegamos a un apartado un tanto especial, pues vamos a definir un nuevo espacio, formado por aplicaciones lineales (cosa que puede impresionar), pero veremos que vamos a poder trabajar de forma muy similar que con los espacios vectoriales. Este es el denominado \textbf{espacio dual}.
+
+
+\begin{definition}
+    Al conjunto de todas las formas lineales de un espacio vectorial $V$, se le denomina espacio dual de $V$ y se le designa por $V^*$, es decir,
+    \[V^*=\curlybraces{f:V\to\mathbb{K}:\text{ lineales}}\]
+\end{definition}
+
+\noindent Al igual que con los espacios vectoriales, podemos definir la \textbf{base dual}, de estos espacios duales y, en consecuencia, podemos determinar la dimensión de este espacio.
+
+\begin{definition}
+    Dadas $B=\curlybraces{e_1,e_2,\dots,e_n}$ base de $V$ y $B^*=\curlybraces{f^1,f^2,\dots,f^n}$ base de $V^*$, decimos que $B^*$ es la base dual de $B$ si para cada $i=1,2,\dots,n$ se verifica que
+    \[f^i(e_j)=\delta_{i}^j=\left\lbrace\begin{matrix}
+        1 & \text{si} & i=j\\
+        0 & \text{si} & i\neq j
+    \end{matrix}\right.\]
+\end{definition}
+
+\begin{proposition}
+\label{Prop1.6}
+    Si $V$ tiene dimensión $n$, entonces $V^*$ es un espacio vectorial de dimensión $n$.
+\end{proposition}
+\begin{proof}
+    Sea $B=\curlybraces{e_1,e_2,\dots,e_n}$ base de $V$, tendremos que $dimV=n$. Construimos la base dual como $B^*=\curlybraces{f^1,f^2,\dots,f^n}$, tal que para cada $j$, tenemos
+    \[\begin{matrix}
+        f^j:&V & \to & \mathbb{K}\\
+        &v=\sum\limits_{j=1}^n\lambda^je_j & \mapsto & f^j(v)=\lambda_j
+    \end{matrix}\]
+    Tenemos que verificar que las formas sean linealmente independientes, para ello debe cumplirse que
+    \[\lambda_1f^1+\lambda_2f^2+\dots+\lambda_nf^n=0\Longleftrightarrow\lambda_1=\lambda_2=\dots=\lambda_n=0\]
+    Para ello, lo aplicamos a un $e_i\in B$, tal que
+    \[(\lambda_1f^1+\lambda_2f^2+\dots+\lambda_nf^n)(e_i)=0\]
+    Al ser aplicación lineal,
+    \[\lambda_1f^1(e_i)+\lambda_2f^2(e_i)+\dots+\lambda_nf^n(e_i)=0\]
+    pero sabemos que $f^j(e_i)=\delta_{j}^i=\left\lbrace\begin{matrix}
+        1 & \text{si} & i=j\\
+        0 & \text{si} & i\neq j
+    \end{matrix}\right.$, luego la ecuación anterior se reduce a 
+    \[\lambda_if^i(e_i)=\lambda_i=0\]
+    luego, como hemos cogido un $i$ arbitrario, tendremos que $\lambda_i=0$ para todo $i=1,2,\dots,n$. Por tanto, son linealmente independientes. $\checkmark$\\
+    Ahora vamos comprobar que los elementos de $B^*$ son un conjunto generador que genera el espacio $V^*$. Para ello, tomamos un elemento $g\in V^*$ y se deberá poder escribir como combinación lineal de los elementos de la base de $V^*$. 
+    Sabemos que $g$ debe satisfacer que $g(e_j)=\alpha_j$, pues debe estar determinado por la imagen de la base. Podemos tomar un $v\in V$, que sea $v=\sum\limits_{j=1}^n\lambda^je_j=\lambda^je_j$, así,
+    \[g(v)=g\left(\lambda^je_j\right)=\lambda^jg(e_j)=\lambda^j\alpha_j\]
+    siendo $\alpha_j\in\mathbb{K}$ y usando que $\lambda_j=f^j(v)$, tenemos que 
+    \[g(v)=\alpha_jf^j(v)\]
+    y por tanto,
+    \[g=\alpha_1f^1+\alpha_2f^2+\dots+\alpha_nf^n\]
+    Luego, hemos concluido que $B^*$ es también conjunto generador, y por tanto es base de $V^*$, que posee $n$ elementos, así $dimV=dimV^*=n$. \qedhere
+    \end{proof}
+
+\noindent Este será el caso que nos interese, cuando $V$ y, por tanto, $V^*$ son espacios vectoriales de dimensión finita. Así, para la matriz asociada a una forma lineal $f:V\to\mathbb{K}$ usaremos siempre la base $\curlybraces{1}$ de este espacio y escribiremos $\mathcal{M}_B(f)\equiv\mathcal{M}_{B,\curlybraces{1}}(f)$.\\ \\
+\noindent Veremos ahora varias propiedades de las bases duales.
+
+\begin{proposition}[1ª Propiedad de las bases duales]
+    Si $B^*$ es la base dual de $B$, entonces  para  cada forma lineal $f$, los elementos de su matriz asociada en la base $B$ coinciden con sus coordenadas en la base $B^*$.
+\end{proposition}
+\begin{proof}
+    Llamemos $A=\begin{pmatrix}
+        a_1 & a_2 & \dots & a_n
+    \end{pmatrix}$ a la matriz asociada a $f$ en la base $B$. Entonces $a_i=f(e_i)$, siendo los $e_i$ los elementos de la base $B$. Por otra parte, si $f=\begin{pmatrix}
+        b_1 & b_2 & \dots & b_n
+    \end{pmatrix}_{B^*}$ entonces,
+    \[f=b_1f^1+b_2f^2+\dots+b_nf^n\]
+    luego,
+    \[a_i=f(e_i)=(b_1f^1+b_2f^2+\dots b_nf^n)(e_i)=b_1f^1(e_i)+b_2f^2(e_i)+\dots+b_if^i(e_i)+\dots b_nf^n(e_i)\]
+    Usando la definición de la base dual, que es
+    \[f^j(e_i)=\delta_{j}^i=\left\lbrace\begin{matrix}
+        0 & \text{si} & i\neq j\\
+        1 & \text{si} & i=j
+    \end{matrix}\right.\]
+    nos queda entonces que $a_i=b_i$, luego, los elementos de la matriz asociada de $f$ en $B$ se corresponden con sus coordenadas en $B^*$. \qedhere
+\end{proof}
+
+\noindent Hemos visto que $V^*$ es un espacio vectorial con la misma dimensión que el espacio $V$, por tanto, es lógico pensar que debería existir una relación entre sus bases, cosa que nos da las
+siguientes proposiciones.
+
+\begin{proposition}
+    Para cada base $B$ de un espacio vectorial $V$, existe una base de $V^*$ que es dual de la base $B$.
+\end{proposition}
+\begin{proof}
+    Dada la base $B=\curlybraces{e_1,e_2,\dots,e_n}$ de $V$, y sabiendo que una forma lineal está completamente determinada conociendo las imágenes de los vectores de $B$, por tanto, para cada $i=1,2,\dots,n$ existe una única $f^i$ verificando
+    \[f^i(e_i)=1\hspace{3mm}\text{y}\hspace{3mm}f^j(e_i)=0,\hspace{2mm}\forall i\neq j\]
+    Luego, un conjunto de formas lineales $\curlybraces{f^1,f^2,\dots,f^n}$ verificando las condiciones para ser base dual (lo anterior), siempre existe.\\
+    Debemos comprobar que realmente sea una base de $V^*$. Como conocemos que la dimensión del espacio es $n$, solo necesitamos demostrar que los $f^i$ son linealmente independientes:
+    \[\lambda_1f^1+\lambda_2f^2+\dots+\lambda_nf^n=0\Longleftrightarrow \lambda_1=\lambda_2=\dots=\lambda_n=0\]
+    Evaluamos un $e_i$ arbitrario, tal que
+    \[0=(\lambda_1f^1+\lambda_2f^2+\dots+\lambda_nf^n)(e_i)=\lambda_1f^1(e_i)+\lambda_2f^2(e_i)+\dots+\lambda_if^i(e_i)+\dots+\lambda_nf^n(e_i)=\lambda_i\]
+    Luego, son linealmente independientes y por tanto, son base dual. \qedhere
+\end{proof}
+\begin{note}
+    El siguiente Teorema lo vamos a necesitar para demostrar la Proposición \ref{Prop2}, ver su demostración en \cite[Chapter I, Section 4, Theorem 1, Page 38]{MerinoAlgebraLinealLibro}
+    \end{note}
+    \medskip
+    \begin{theorem}
+    \label{Teor1}
+        Para un matriz cuadrada $A\in\mathcal{M}_n(\mathbb{K})$, las siguientes afirmaciones son equivalentes:
+        \begin{enumerate}
+            \item $A$ es invertible.
+            \item $A$ es regular a derecha (esto es, $BA=0\Rightarrow B=0$).
+            \item $A$ es regular a izquierda (esto es, $AB=0\Rightarrow B=0$).
+            \item $rg(A)=n$.
+            \item La forma de Hermite por filas de $A$ es la identidad.
+            \item La forma de Hermite por columnas de $A$ es la identidad.
+            \item $A$ es un producto de matrices elementales.
+        \end{enumerate}
+    \end{theorem}
+
+\begin{proposition}
+\label{Prop2}
+    Sea $V$ un espacio vectorial de dimensión $n$ y sea $B$ una base de $V$ respecto de la cual todos los vectores y formas lineales vienen dados. Si $B=\curlybraces{e_1,e_2,\dots,e_n}$ es una base cuyos vectores, escritos por columnas, forman la matriz $A$, entonces la base dual de $B$, $B^*=\curlybraces{f^1,f^2,\dots,f^n}$ viene dada por las filas de $A^{-1}$ y viceversa.
+\end{proposition}
+\begin{proof}
+    En primer lugar, como $B$ es base, entonces la matriz $A$ es regular, es decir, tiene inversa\footnote{
+    Cosa que se cumple, pues al ser $A$ la matriz asociada a una $f$ en la base $B$, que tiene dimensión $n$, por tanto $rg(A)=n$. Así, usando el siguiente Teorema vemos que $A$ es regular por el Teorema \ref{Teor1}}. Si $\begin{pmatrix}
+        b_{i_1} & b_{i_2} & \dots & b_{i_n}
+    \end{pmatrix}$ es la matriz asociada a $f^i$ y $e_j=\begin{pmatrix}
+        a_{j_1} & a_{j_2} & \dots & a_{j_n}
+    \end{pmatrix}_{B}$, entonces debe cumplirse que
+    \[f^i(e_j)=\begin{pmatrix}
+        b_{i_1} & b_{i_2} & \dots & b_{i_n}
+    \end{pmatrix}\cdot\begin{pmatrix}
+        a_{j_1}\\
+        a_{j_2}\\
+        \vdots \\
+        a_{j_n}
+    \end{pmatrix}=\delta_{ij}\]
+    Es decir, las matrices asociadas a $f^i$, con $i=1,2,\dots,n$, son las filas de $A^{-1}$, o lo que es lo mismo, sus coordenadas en la base $B^*$. Además, puesto que $A^{-1}$ es regular, sus filas son linealmente independientes. \qedhere
+\end{proof}
+\begin{note}
+    Esta proposición nos sirve para calcular el problema inverso, es decir, dada una base de $V^*$, calcular la base de $V$ de la cual es dual.
+\end{note}
+ 
+\begin{example}[Ejemplo de las proposiciones 1.3 y 1.4]
+$\hspace{1mm}$\\
+\textit{(a)} \textbf{Considerando en }$\mathbb{R}^3$\textbf{ la base }$B=\curlybraces{(1,-1,1),(-1,2,-1),(-1,1,0)}$\textbf{, calcular la base dual de }$B$. \textit{(b)} \textbf{Hacerlo también a la inversa.}
+\begin{enumerate}[label=(\alph*)]
+    \item Tenemos $B=\curlybraces{(1,-1,1),(-1,2,-1),(-1,1,0)}\in\mathbb{R}^3$. ¿$B^*=\curlybraces{f^1,f^2,\dots,f^n}$?\\ \\
+    Como debemos obtener 3 formas lineales (componentes de $B^*$), bastará con obtener las matrices asociadas a la base canónica:
+    \begin{itemize}
+        \item Comenzamos obteniendo la matriz asociada de $f^1$:\\ \\
+        Por definición de base dual, sabemos que $f^i(e_j)=\delta_{ij}$
+        \[\Rightarrow\left\lbrace\begin{matrix}
+            f^1\brackets{(1,-1,1)}=1 & \Rightarrow & \begin{pmatrix}
+                a_{11} & a_{12} & a_{13}
+            \end{pmatrix}\begin{pmatrix}
+                1\\
+                -1\\
+                1
+            \end{pmatrix}=1\\ \\
+            f^2\brackets{(-1,2,-1)}=0 & \Rightarrow & \begin{pmatrix}
+                a_{11} & a_{12} & a_{13}
+            \end{pmatrix}\begin{pmatrix}
+                -1\\
+                2\\
+                -1
+            \end{pmatrix}=0\\ \\
+            f^3\brackets{(-1,1,0)}=0 & \Rightarrow & \begin{pmatrix}
+                a_{11} & a_{12} & a_{13}
+            \end{pmatrix}\begin{pmatrix}
+                -1\\
+                1\\
+                0
+            \end{pmatrix}=0
+        \end{matrix}\right.\]
+        Entonces, tenemos el siguiente sistema de ecuaciones:
+        \[\left.\begin{matrix}
+            a_{11}-a_{12}+a_{13}=1\\
+            -a_{11}+2a_{12}-a_{13}=0\\
+            -a_{11}+a_{12}+0=0
+        \end{matrix}\right\rbrace\]
+        Resolviendo el sistema tenemos, $a_{11}=a_{12}=a_{13}=1$.
+        \item Ahora calculamos la de $f^2$:
+                \[\Rightarrow\left\lbrace\begin{matrix}
+            f^1\brackets{(1,-1,1)}=0 & \Rightarrow & \begin{pmatrix}
+                a_{21} & a_{22} & a_{23}
+            \end{pmatrix}\begin{pmatrix}
+                1\\
+                -1\\
+                1
+            \end{pmatrix}=0\\ \\
+            f^2\brackets{(-1,2,-1)}=1 & \Rightarrow & \begin{pmatrix}
+                a_{21} & a_{22} & a_{23}
+            \end{pmatrix}\begin{pmatrix}
+                -1\\
+                2\\
+                -1
+            \end{pmatrix}=1\\ \\
+            f^3\brackets{(-1,1,0)}=0 & \Rightarrow & \begin{pmatrix}
+                a_{21} & a_{22} & a_{23}
+            \end{pmatrix}\begin{pmatrix}
+                -1\\
+                1\\
+                0
+            \end{pmatrix}=0
+        \end{matrix}\right.\]
+         Entonces, tenemos el siguiente sistema de ecuaciones:
+        \[\left.\begin{matrix}
+            a_{21}-a_{22}+a_{23}=0\\
+            -a_{21}+2a_{22}-a_{23}=1\\
+            -a_{21}+a_{22}+0=0
+        \end{matrix}\right\rbrace\]
+        Resolviendo el sistema tenemos $a_{21}=a_{22}=1$ y $a_{23}=0$.
+        \item Ahora calculamos la de $f^3$:
+                        \[\Rightarrow\left\lbrace\begin{matrix}
+            f^1\brackets{(1,-1,1)}=0 & \Rightarrow & \begin{pmatrix}
+                a_{31} & a_{32} & a_{33}
+            \end{pmatrix}\begin{pmatrix}
+                1\\
+                -1\\
+                1
+            \end{pmatrix}=0\\ \\
+            f^2\brackets{(-1,2,-1)}=0 & \Rightarrow & \begin{pmatrix}
+                a_{31} & a_{32} & a_{33}
+            \end{pmatrix}\begin{pmatrix}
+                -1\\
+                2\\
+                -1
+            \end{pmatrix}=0\\ \\
+            f^3\brackets{(-1,1,0)}=1 & \Rightarrow & \begin{pmatrix}
+                a_{31} & a_{32} & a_{33}
+            \end{pmatrix}\begin{pmatrix}
+                -1\\
+                1\\
+                0
+            \end{pmatrix}=1
+        \end{matrix}\right.\]
+         Entonces, tenemos el siguiente sistema de ecuaciones:
+        \[\left.\begin{matrix}
+            a_{31}-a_{32}+a_{33}=0\\
+            -a_{31}+2a_{32}-a_{33}=0\\
+            -a_{31}+a_{32}+0=1
+        \end{matrix}\right\rbrace\]
+        Resolviendo el sistema tenemos $a_{31}=-1$, $a_{32}=0$ y $a_{33}=1$.
+    \end{itemize}
+    Por tanto la matriz asociada en la base canónica será,
+    \[A=\begin{pmatrix}
+        1 & 1 & 1\\
+        1 & 1 & 0\\
+        -1 & 0 & 1
+    \end{pmatrix}\]
+    donde la primera fila será la matriz asociada a $f^1\sim\begin{pmatrix}
+        1 & 1 & 1
+    \end{pmatrix}$, la segunda fila será la matriz asociada a $f^2\sim\begin{pmatrix}
+        1 & 1 & 0
+    \end{pmatrix}$ y la tercera fila será la matriz asociada a $f^3\sim\begin{pmatrix}
+        -1 & 0 & 1
+    \end{pmatrix}$.\\
+    Entonces tendremos:
+    \[\begin{matrix}
+        f^1,f^2,f^3:\mathbb{R}^3\to\mathbb{R}\\ \\
+        \left.\begin{matrix}
+            f^1(x,y,z)=x+y+z\\
+            f^2(x,y,z)=x+y\\
+            f^3(x,y,z)=-x+z
+        \end{matrix}\right\rbrace (\triangle)
+    \end{matrix}\]
+    \item Partiendo de $(\triangle)$, vamos a llegar a la base $B$.\\
+    Sabemos que $\curlybraces{f^1,f^2,f^3}$ forman una base dual de $\mathbb{R}^3$, pues lo acabamos de obtener, pero como queremos hacerlo como un ejercicio genérico, debemos comprobar que son linealmente independientes, ya que $dim(\mathbb{R}^3)=3$. La forma más sencilla de ver que son l.i. es introducir los vectores en una matriz y calcular su rango.\\
+    Usando la primera propiedad de las bases duales, la matriz asociada a $f^i$ en la base canónica nos proporciona también las coordenadas de $f^i$ en la base dual de la base canónica. Así, las matrices asociadas a $f^1,f^2,f^3$ son:
+    \[f^1\sim\begin{pmatrix}
+        1 & 1 & 1
+    \end{pmatrix},\hspace{5mm}f^2\sim\begin{pmatrix}
+        1 & 1 & 0
+    \end{pmatrix},\hspace{5mm}f^3\sim\begin{pmatrix}
+        -1 & 0 & 1
+    \end{pmatrix}\]
+    Así, ver que son l.i. se reduce al cálculo del determinante,
+    \[\left|A\right|=\begin{vmatrix}
+        1 & 1 & 1\\
+        1 & 1 & 0\\
+        -1 & 0 & 1
+    \end{vmatrix}=1+0+0+1-1-0=1\neq0\]
+    por tanto, son linealmente independiente.\\
+    Para encontrar la base de $\mathbb{R}^3$ de la cual es dual $\curlybraces{f^1,f^2,f^3}$, solo tenemos que calcular la inversa de la matriz cuyo determinante acabamos de calcular:
+    \[A^{-1}=\frac{Adj(A)^t}{\cancelto{1}{\left|A\right|}},\hspace{2mm}Adj(A)=\begin{pmatrix}
+        1 & -1 & 1\\
+        -1 & 2 & -1\\
+        -1 & 1 & 0
+    \end{pmatrix},\hspace{2mm}Adj(A)^t=\begin{pmatrix}
+        1 & -1 & -1\\
+        -1 & 2 & -1\\
+        1 & -1 & 0
+    \end{pmatrix}=A^{-1}\]
+    Por tanto, los vectores de la base de $\mathbb{R}^3$ de la cual es dual $\curlybraces{f^1,f^2,f^3}$, serán las columnas de la matriz $A^{-1}$, tal que
+    \[B=\curlybraces{(1,-1,1),(-1,2,-1),-1,1,0}\]
+\end{enumerate}
+\end{example}
+\noindent Sigamos viendo más propiedades de las bases duales.
+\begin{proposition}[2ª Propiedad de las bases duales]
+    Si $B^*=\curlybraces{f^1,\dots,f^n}$ es la base dual de $B$, entonces dado un vector $x\in V$, si $x=(x_1,x_2,\dots,x_n)_{B}$, se verifica que $x^i=f^i(x)$; $\forall i=1,\dots,n$.
+\end{proposition}
+\begin{proof}
+    Como $x\in V$ y $B=\curlybraces{e_1,e_2,\dots,e_n}$, base de $V$, entonces podremos escribir $x=x^1e_1+x^2e_2+\dots x^ne_n$, luego
+    \[f^i(x)=f^i(x^1e_1+x^2e_2+\dots x^ne_n)=x^1f^i(e_1)+x^2f^i(e_2)+\dots+x^if^i(e_i)+\dots+ x^nf^i(e_n)=x^i\]
+    Por tanto, $x^i=f^i(x)$. \qedhere
+\end{proof}
+
+\begin{theorem}
+    $V$ es isomorfo con $(V^*)^*$, siendo el espacio bidual $(V\cong(V^*)^*)$.
+\end{theorem}
+\begin{proof}
+    Sea \[\begin{matrix}
+        \phi: & V\to(V^*)^*\\
+         & v\mapsto\phi(v)
+    \end{matrix}\]
+    donde $\phi(v)\in(V^*)^*$. Se define como \[\begin{matrix}
+        \phi(v): & V^*\to\mathbb{K}\\
+         & f\mapsto f(v)
+    \end{matrix}\]
+    Veamos que $\phi$ es lineal, $\forall u,v\in V;$
+    \[\begin{matrix}
+        \phi(u): & V^*\to\mathbb{K}\\
+         & f\mapsto f(u)
+    \end{matrix};\hspace{5mm}\begin{matrix}
+        \phi(v): & V^*\to\mathbb{K}\\
+         & f\mapsto f(v)
+    \end{matrix}\]
+    \[\begin{matrix}
+        \phi(u+v): & V^*\to\mathbb{K}\\
+         & f\mapsto f(u+v)
+    \end{matrix};\hspace{5mm}\hspace{5mm}\begin{matrix}
+        \phi(v)+\phi(u): & V^*\to\mathbb{K}\\
+         & f\mapsto f(v)+f(u)
+    \end{matrix}\]
+    Como $f\in V^*$ es lineal, entonces se cumple que $f(u+v)=f(u)+f(v)$ y por tanto, $\phi(u+v)=\phi(u)+\phi(v)$. También,
+    \[\begin{matrix}
+        \forall u\in V &
+        \forall\lambda\in\mathbb{K}
+    \end{matrix};\hspace{3mm}\begin{matrix}
+        \phi(\lambda\cdot u): &V^*\to\mathbb{K}\\
+         & f\mapsto f(\lambda\cdot u)
+    \end{matrix};\hspace{5mm}\begin{matrix}
+        \lambda\cdot\phi(u): & V^*\to\mathbb{K}\\
+         & f\mapsto\lambda\cdot f(u)
+    \end{matrix}\]
+    como $f\in V^*$ es lineal, se cumple que $f(\lambda\cdot u)=\lambda\cdot f(u)$ y por tanto, $\phi(\lambda\cdot u)=\lambda\cdot\phi(u)$. Luego, $\phi$ es lineal.\\ \\
+    Veamos que $Ker\phi=\curlybraces{0}$:\\
+    si $u\in\ker\phi$, entonces $\phi(u)=0$, tal que \[\begin{matrix}
+        \phi(u): & V^*\to\mathbb{K}\\
+         & f\mapsto0
+    \end{matrix}\] 
+    Sea $\curlybraces{e_1,e_2,\dots,e_n}$ base de $V$, sabemos que \[\begin{matrix}
+        \phi_{e_{j}}: & V\to\mathbb{K}\\
+         & v\mapsto\phi_{e_{j}}(x)=x_j
+    \end{matrix}\]
+    tal que $v=x^1e_1+x^2e_2+\dots x^ne_n$, se verifica que $\phi_{e_j}\in V^*$. Por tanto, $\phi(u)(\phi_{e_j})=0$, pues $u\in Ker\phi$ y $\phi(u)$ es la función nula, tal que
+    \[u=x^1e_1+\dots x^ne_n=0e_1+\dots+0e_n=0\]
+    Por tanto, $Ker\phi=\curlybraces{0}$, luego $\phi:V\to(V^*)^*$ es inyectiva y lineal.\\
+    Por la Proposición \ref{Prop1.6}, tenemos que $dimV=dimV^*=n$ y por tanto, $dim(V^*)^*=n=dimV^*$. Luego, $\phi:V\to V^*$ verifica
+    \[dimIm\phi=dimV-dimKer\phi=n-0=n\Rightarrow dimIm\phi=dim(V^*)^*=n\Rightarrow Im\phi=(V^*)^*\]
+    luego, la aplicación es sobreyectiva y por tanto, es biyectiva. Luego, al ser biyectiva y aplicación lineal, son isomorfos. \qedhere
+\end{proof}
+ 
+\subsubsection{Anulador de un subespacio}
+El \textbf{anulador de un subespacio} nos permite, como su propio nombre indica, anular subespacios.
+\begin{definition}
+    Consideremos un espacio vectorial $V$ y sea $S$ un subconjunto de $V$, entonces se define el anulador de $S$ como el conjunto
+    \[an(S)=\curlybraces{f\in V^*\left|\right.f(v)=0,\forall v\in S}\]
+\end{definition}
+\begin{proposition}\label{Prop:1}
+    Sea $V$ un $\mathbb{K}$-espacio vectorial y sea $S$ un subconjunto de $V$, entonces se verifica:
+    \begin{enumerate}[label=(\roman*)]
+        \item $an(S)$ es un subespacio vectorial de $V^*$.
+        \item $an(S)=an(L(S))$
+    \end{enumerate}
+\end{proposition}
+\begin{proof}
+    \begin{tabular}{c|}
+         \textit{(i)} \\ \hline
+    \end{tabular} 
+    Dadas dos formas de $an(S)$, digamos $f,g\in an(S)$, queremos probar que $f+g\in an(S)$, y sea $\lambda\in\mathbb{K}$, probar que $\lambda f\in an(S)$. 
+    Para lo primero, hacemos $\forall v\in V$,
+    \[(f+g)(v)=f(v)+g(v)=0+0=0\Rightarrow f+g\in an(S)\]
+    Para lo segundo hacemos,
+    \[(\lambda f)(v)=\lambda f(v)=\lambda\cdot0=0\Rightarrow \lambda f\in an(S)\]
+    Por tanto, es subespacio vectorial de $V^*$. \qedhere\\ 
+    \begin{tabular}{c|}
+         \textit{(ii)}  \\ \hline
+    \end{tabular}
+    $\hspace{4mm}$\begin{tabular}{c|}
+         $\subseteq$  \\ \hline
+    \end{tabular}
+    Sabemos que $S\subseteq L(S)$, entonces si $f\in an(L(S))$ anula a todo vector de $L(S)$, en particular, anula a todo vector de $S$ y así se tiene la inclusión $an(L(S))\subseteq an(S)$.\\
+    \hspace{5mm}\begin{tabular}{c|}
+         $\supseteq$  \\ \hline
+    \end{tabular} 
+    Considerando $g\in an(S)$ y cualquier vector de $L(S)$ de la forma,
+    \[v=a^1s_1+a^2s_2+\dots a^rs_r\]
+    con $s_i\in S$ para cada $i=1,2,\dots,r$. Entonces,
+    \[f(v)=f(a^1s_1+a^2s_2+\dots a^rs_r)=a^1\cancelto{0}{f(s_1)}+a^2\cancelto{0}{f(s_2)}+\dots+a^r\cancelto{0}{f(s_r)}=0\]
+    y por tanto, $f\in an(S)$, luego $an(S)\subseteq an(L(S))$. Luego, $an(S)=an(L(S))$. $\qedh$
+\end{proof}
+\begin{note}
+    Cuando consideramos un subespacio $U\leq V$, su anulador $an(U)$ puede calcularse fácilmente usando la segunda de las propiedades anteriores.
+\end{note}
+\begin{note}
+    En general, si llamamos $n=dimV$ y $U$ es un subespacio de $V$ con una base $\curlybraces{u_1,u_2,\dots,u_r}$, entonces $an(U)=an(\curlybraces{u_1,\dots,u_r})$ (por la Proposición \ref{Prop:1}), lo que permite escribir las $r$-ecuaciones cartesianas de $an(U)$. Además, como $\curlybraces{u_1,\dots,u_r}$ son l.i., entonces $din(an(U))=n-r$, es decir,
+    \[dim(an(U))=dimV-dimU\]
+\end{note}
+\subsubsection{Aplicación lineal traspuesta}
+    Dados dos espacios vectoriales $V$ y $V$' sobre el cuerpo $\mathbb{K}$, es posible considerar los respectivos espacios duales, y si $f:V\to V$' es una aplicación lineal con matriz asociada $A$ respecto de ciertas bases $B$ y $B$', entonces se puede definir una aplicación lineal entre los duales mediante $f$. Para ello, tomemos $\varphi\in(V')^*$, es decir, $\varphi:V'\to\mathbb{K}$, entonces podemos considerar el diagrama:
+    \[\begin{matrix}
+        & f & & \\
+        V & \to & V' &\\
+         & & \downarrow & \varphi\\
+         & & \mathbb{K} &
+    \end{matrix}\]
+    y la composición $\varphi\circ f:V\to\mathbb{K}$ es un elemento de $V^*$. De esta manera, tenemos definida una aplicación a la que llamamos $f^t$, aplicación traspuesta de $f$, tal que $f^t:(V')^*\to V^*$ dada por $f^t(\varphi)=\varphi\circ f$.
+
+\begin{proposition}
+    Sea $f:V\to V'$ una aplicación lineal y sean $B$ y $B^*$ bases de $V$ y $V'$ respectivamente, entonces se verifica:
+    \begin{enumerate}[label=(\roman*)]
+        \item $f^t$ es una aplicación lineal.
+        \item Si la matriz asociada a $f$ respecto de las bases $B$ y $B'$ es $A$, entonces la matriz asociada a $f^t$ en las bases $B^*$ y $(B')^*$ es $A^t$.
+    \end{enumerate}
+\end{proposition}
+\begin{proof}
+    \begin{tabular}{c|}
+        \textit{(i)}  \\ \hline
+    \end{tabular} 
+    Si $\varphi_1,\varphi_2\in(V')^*$ y $a_1,a_2\in\mathbb{K}$, entonces
+    \[f^t(a_1\varphi_1+a_2\varphi_2)=(a_1\varphi_1+a_2\varphi_2)\circ f\]
+    Dado $v\in V$, tenemos
+    \[((a_1\varphi_1+a_2\varphi_2)\circ f)(v)=(a_1\varphi_1+a_2\varphi_2)(f(v))=a_1\varphi_1(f(v))+a_2\varphi_2(f(v))=\]
+    \[=a_1(\varphi_1\circ f)(v)+a_2(\varphi_2\circ f)(v)=(a_1(\varphi_1\circ f)+a_2(\varphi_2\circ f))(v)=(a_1f^t(\varphi_1)+a_2f^t(\varphi_2))(v)\]
+    con lo que
+    \[f^t(a_1\varphi_1+a_2\varphi_2)=a_1f^t(\varphi_1)+a_2f^t(\varphi_2)\]
+    luego, es aplicación lineal. \\ \\
+    \begin{tabular}{c|}
+         \textit{(ii)} \\ \hline
+    \end{tabular} 
+    Calculamos las imágenes de las formas lineales de $(B')^*$ por $f^t$:\\
+    si $\varphi_i$ es el $i$-ésimo elemento de $(B')^*$, su matriz asociada en la base $B'$ es $\begin{pmatrix}
+        0 & 0 & \dots & 1^{(i)} & \dots & 0
+    \end{pmatrix}$, donde el 1 está en el $i$-ésimo lugar.\\
+    Entonces, $f^t(\varphi_i)=\varphi_i\circ f$ tiene como matriz asociada en la base $B$ el producto siguiente,
+    \[\begin{pmatrix}
+        0 & 0 & \dots & 1^{(i)} & \dots & 0
+    \end{pmatrix}\cdot\begin{pmatrix}
+        a_{11} & a_{12} & \dots & a_{1n}\\
+        a_{21} & a_{22} & \dots & a_{2n}\\
+        \vdots & \vdots & \ddots & \vdots\\
+        a_{n1} & a_{n2} & \dots & a_{nn}
+    \end{pmatrix}=\begin{pmatrix}
+        a_{i1} & a_{i2} & \dots & a_{in}
+    \end{pmatrix}\]
+    que es la $i$-ésima fila de $A$. Nos da las coordenadas de $f^t(\varphi_i)$ en la base $B^*$; estas coordenadas constituyen a la $i$-ésima columna de la matriz asociada a $f^t$. 
+\end{proof}
+
+\subsubsection{Una aplicación de la teoría del espacio dual: Interpretación de Lagrange}
+La interpretación de Lagrange es una de las tantas aplicaciones que tiene la teoría del espacio dual. 
+\\
+    Sea $a\in\mathbb{R}$, llamamos \textbf{evaluar un polinomio }$q(x)$\textit{ en }$a$, al proceso de sustituir la indeterminada $x$ por el valor real $a$ en el polinomio $p(x)$; al número real obtenido de esta forma lo denotamos por $p(a)$.
+
+\begin{proposition}
+    La aplicación \textit{evaluar en }$a$, que denotamos por $E_a$, es una forma lineal en $\mathbb{P}(\mathbb{R})$.
+\end{proposition}
+\begin{proof}
+    Consideramos dos polinomios,
+    \[p(x)=a_0+a_1x+\dots+a_nx^n\]
+    \[q(x)=b_0+b_1x+\dots+b_nx^n\]
+    y $\lambda_1,\lambda_2\in\mathbb{R}$. Entonces,
+    \[E_a(\lambda_1p(x)+\lambda_2q(x))=E_a((\lambda_1a_0+\lambda_2b_0)+(\lambda_1a_1+\lambda_2b_1)x+\dots+(\lambda_1a_n+\lambda_2b_n)x^n)=\]
+    \[=\lambda_1a_0+\lambda_2b_0+(\lambda_1a_1+\lambda_2b_1)a+\dots+(\lambda_1a_n+\lambda_2b_n)a^n\]
+    y también,
+    \[\lambda_1E_a(p(x))+\lambda_2E_a(q(x))=\lambda_1E_a(a_0+a_1x+\dots+a_nx^n)+\lambda_2E_a(b_0+b_1x+\dots+b_nx^n)= \]
+    \[=\lambda_1(a_0+a_1a+\dots+a_na^n)+\lambda_2(b_0+b_1a+\dots+b_na^n)=\]
+    \[=\lambda_1a_0+\lambda_2b_0+(\lambda_1a_1+\lambda_2b_1)a+\dots+(\lambda_1a_n+\lambda_2b_n)a^n\]
+    Luego, $E_a(\lambda_1p(x)+\lambda_2q(x))=\lambda_1E_a(p(x))+\lambda_2E_a(q(x))$, y por tanto, es una aplicación lineal. \qedhere
+\end{proof}
+\begin{note}
+    La matriz asociada a $E_a$ en la base $\curlybraces{1,x,x^2,\dots,x^n}$ de $\mathbb{P}(\mathbb{R})$, como $E_a(1)=1$, $E_a(x)=a$, $E_a(x^2)=a^2$, $\dots$, $E_a(x^n)=a^n$, y por tanto, la matriz asociada de $E_a$ es $A=\begin{pmatrix}
+        1 & x & x^2 & \dots & x^n
+    \end{pmatrix}_{\mathbb{P}(\mathbb{R})}$. 
+\end{note}
+
+\begin{proposition}
+    Si $a_0,a_1,\dots,a_n\in\mathbb{R}$ con $a_i\overset{i\neq j}{\neq} a_j$, entonces $\curlybraces{E_{a_0},E_{a_1},\dots,E_{a_n}}$ es una base del espacio dual de $\mathbb{P}(\mathbb{R})$.
+\end{proposition}
+\begin{proof}
+    Llamemos $B^*$ a la base dual de la base $B=\curlybraces{1,x,x^2,\dots,x^n}$ de $\mathbb{P}(\mathbb{R})$. Entonces las coordenadas de $E_{a_0},E_{a_1},\dots,E_{a_n}$ en la base $B^*$ son
+    \[(1,a_0,a_0^2,\dots,a_o^n),(1,a_1,a_1^2,\dots,a_1^n),\dots,(1,a_n,a_n^2,\dots,a_n^n)\]
+    respectivamente. Veamos que son linealmente independientes; para ello, vemos que el determinante e la matriz es no nulo:
+    \[\begin{vmatrix}
+        1 & 1 & \dots & 1\\ 
+        a_0 & a_1 & \dots & a_n\\
+        a_0^2 & a_1^2 & \dots & a_n^2\\
+        \vdots & \vdots & \ddots & \vdots\\
+        a_0^n & a_1^n & \dots & a_n^n
+    \end{vmatrix}=\prod\limits_{i>j}(a_i-a_j)\]
+    siendo este el Determinante de Vandermonde.\\
+    Como $a_i\neq a_j$ para $i\neq j$, este determinante nunca se anula, luego son linealmente independientes, y por tanto, son una base. \qedhere 
+\end{proof}
+\begin{proposition}
+    Los polinomios 
+    \[p_j(x)=\prod\limits_{i\neq j}\frac{x-a_j}{a_j-a_i};\hspace{3mm}j=0,1,2,\dots,n\]
+    forman la base de $\mathbb{P}(\mathbb{R})$ de la cual es dual la formada por $E_{a_0},E_{a_1},\dots,E_{a_n}$.\label{prop1.22}
+\end{proposition}
+\begin{proof}
+    Si evaluamos el polinomio $p_j(x)=\prod\limits_{i\neq j}\frac{x-a_j}{a_i-a_j}$ en $a_i$ con $i\neq j$, como en el producto aparece el término $(a_i-a_i)=0$, obtenemos $p_j(a_i)=0$. Al evaluar en $a_j$, el numerador y el denominador de $p_j(a_j)$ son idénticos, y se tiene $\frac{a_j-a_i}{a_j-a_i}=1$, luego $p_j(a_j)=1$. Así, $E_{a_i}(p_j)=\delta_{ij}$, que es la condición de base dual. \qedhere
+\end{proof}
+    \noindent Los polinomios descritos en la Proposición \ref{prop1.22}, reciben el nombre de \textit{polinomios de interpolación de Lagrange}.
+
+\begin{theorem}
+    Dados $n+1$-números reales distintos $a_0,a_1,\dots,a_n$, para cualesquiera $b_0,b_1,\dots,b_n\in\mathbb{R}$, existe un único polinomio $p(x)$ de grado menor o igual que $n$, de forma que $p(a_i)=b_i$, para cada $i=0.1.2,\dots,n$. Dicho polinomio viene dado por
+    \[p(x)=\sum\limits_{j=0}^Nb_jp_j(x)\]
+    siendo $p_0(x),p_1(x),\dots,p_n(x)$ los polinomios de interpolación de Lagrange.
+\end{theorem}
+\begin{proof}
+    Si $p(x)=\sum\limits_{i=0}^Nb_ip_i(x)$ con $p_j(x)=\prod\limits_{i\neq j}\frac{x-a_i}{a_j-a_i}$. Vamos a ver que $p(x)$ es único:\\
+    Tomamos un polinomio de grado $n$, $q(x)$, que satisface lo mismo que $p(x)$, tal que $q(a_i)=b_i$. Definimos otro polinomio de grado $n$, tal que
+    \[r(x)=p(x)-q(x),\hspace{3mm}\text{con}\hspace{3mm}\left\lbrace\begin{matrix}
+        r(a_i)=0 & i=0,1,\dots,n\\
+        \text{Como }r(a_i)=0, & (x-a_i)\left|r(x)\right.
+    \end{matrix}\right.\]
+    luego,
+    \[r(x)=(x-a_i)s(x)=\Lambda(x)(x-a_0)(x-a_1)\dots(x-a_n)\]
+pero vemos que el grado de $r(x)$ es mayor o igual que $n+1$, que es una contradicción, salvo que $\Lambda(x)=0$ y por tanto $q(x)=p(x)$, luego, el polinomio es único. Ahora, vamos a demostrar que este polinomio satisface la igualdad:
+    \[p(a_0)=\sum\limits_{i=0}^Nb_ip_i(a_0)=\sum\limits_{i=0}^Nb_i\delta_0^i=b_0\]
+    \[p(a_j)=\sum\limits_{i=0}^Nb_ip_i(a_j)=\sum\limits_{i=0}^Nb_i\delta_j^i=b_j\]
+    Luego, queda demostrado. \qedhere
+\end{proof}
+
+\subsubsection{Notación de Einstein}
+La notación de Einstein va a servir para facilitarnos la escritura, pues cada vez que tengamos un vector o una forma escrita como combinación lineal, vamos a poder redefinirlos como
+\[w=\sum\limits_{i=1}^n\lambda^iv_i\equiv\lambda^iv_i\]
+esto para un vector. Para una forma, tendremos
+\[p=\sum\limits_{i=1}^n\mu_if^i\equiv\mu_i f^i\]
+Además, para simplificar aún más la notación y dejarnos de tantas letras, vamos a identificar los escalares de $w$ como 
+\[\lambda^i\equiv w^i\]
+Así, los vectores como combinación lineal de otros vectores, los escribiremos como
+\[w=w^iv_i\]
+Y para las formas, haremos la identificación
+\[\mu_i\equiv p_i\]
+Así, las formas como combinación lineal de otras formas se escribirán como
+\[p=p_if^i\]
+\begin{example}
+Un ejemplo de ello, será a la hora de identificar un vector en los términos de su base, pues suponiendo un $V$ espacio vectorial sobre el cuerpo $\mathbb{K}$ y cuya base sea $B=\curlybraces{v_1,v_2,\dots,v_n}$, tomando un $u\in V$, lo denotaremos como,
+\[u=u^iv_i\]
+\end{example}
+\begin{example}
+    Otro ejemplo será a la hora de identificar una forma en términos de la base dual, pues suponiendo un $V^*$ espacio dual de $V$, cuya base dual es $B^*=\curlybraces{f^1,f^2,\dots,f^n}$, tomando un $q\in V^*$, lo denotaremos como,
+    \[q=q_if^i\]
+\end{example}
+\begin{note}
+    En un artículo físico, se identifica directamente el escalar con el vector, es decir,
+    \[w^i\equiv w\]
+    pues se presupone que existe una base donde $w$ está bien definido. Así, los físicos usaremos de forma indistinguible los vectores y sus componentes respecto de una base fijada.
+\end{note}
+
+ \subsection{Formas bilineales, productos escalares y formas cuadráticas}
+ A continuación, vamos a estudiar las \textbf{formas bilineales}, el \textbf{producto escalar} y las \textbf{formas cuadráticas}. Cosa que será de especial interés a la hora de definir métricas y aplicaciones lineales más generales.
+\subsubsection{Formas bilineales y producto escalar}
+Comenzamos definiendo las aplicaciones bilineales, pues el producto escalar es una aplicación bilineal.
+\begin{definition}
+    Sea $\mathbb{K}$ un cuerpo y $V$ un $\mathbb{K}$-espacio vectorial, una forma bilineal en $V$ es una aplicación
+    \[f:V\times V\to\mathbb{K}\]
+    verificando:
+    \begin{enumerate}[label=(\roman*)]
+        \item $f(u_1+u_2,v)=f(u_1,v)+f(u_2,v)$
+        \item $f(u,v_1+v_2)=f(u,v_1)+f(u,v_2)$
+        \item $f(\lambda u,v)=\lambda f(u,v)$
+        \item $f(u,\lambda v)=\lambda f(u,v)$
+    \end{enumerate}
+    para cualesquiera $\lambda\in\mathbb{K}$ y $u,v,u_1,u_2,v_1,v_2\in V$.
+\end{definition}
+
+\begin{proposition}
+    Una aplicación $f:V\times V\to\mathbb{K}$ es una forma bilineal si y solamente si,
+    \begin{enumerate}[label=(\roman*)]
+        \item $f(\lambda u_1+\mu u_2,v)=\lambda f(u_1,v)+\mu f(u_2,v)$
+        \item $f(u,\lambda v_1+\mu v_2)=\lambda f(u,v_1)+\mu f(u,v_2)$
+    \end{enumerate}
+    para cualesquiera $\lambda,\mu\in\mathbb{K}$ y $u,v,u_1,u_2,v_1,v_2\in V$.
+\end{proposition}
+\begin{proof}
+    Supongamos que $f$ es bilineal, entonces
+    \[f(\lambda u_1+\mu u_2,v)=f( \lambda u_1,v)+f(\mu u_2,v)=\lambda f(u_1,v)+\mu f(u_2,v)\checkmark\]
+    \[f(u,\lambda v_1+\mu v_2)=f(u,\lambda v_1)+f(u,\mu v_1)=\lambda f(u,v_1)+\mu f(u,v_2)\checkmark\]
+    Recíprocamente, suponiendo que se verifican estas condiciones, entonces para $\lambda=1,\mu=1$ se obtienen \textit{(i)} y \textit{(ii)}, y con $\mu=0$, obtenemos \textit{(iii)} y \textit{(iv)}.
+\end{proof}
+% \noindent Veamos ahora una definición formal de qué es un producto escalar
+% \begin{definition}
+%     Sea $\mathbb{K}$ un cuerpo y $V$ un $\mathbb{K}$-espacio vectorial, una forma bilineal en $V$ es una aplicación $f:V\times V\to\mathbb{K}$ que verifica:
+%     \begin{enumerate}[label=(\roman*)]
+%         \item $f(u_1+u_2,v)=f(u_1,v)+f(u_2,v)$
+%         \item $f(u,v_1+v_2)=f(u,v_1)+f(u,v_2)$
+%         \item $f(a\cdot u,v)=a\cdot f(u,v)$
+%         \item $f(u,a\cdot v)=a\cdot f(u,v)$
+%     \end{enumerate}
+%     tal que $\forall a\in \mathbb{K}$, $\forall u,v,u_1,u_2,v_1,v_2\in V$.
+% \end{definition}
+\noindent Veamos algunas propiedades de las aplicaciones bilineales.
+\begin{proposition}[Propiedades]
+    Sea $f:V\times V\to\mathbb{K}$ una forma bilineal, entonces se verifica:
+    \begin{enumerate}[label=(\roman*)]
+        \item $f(u,0)=f(0,u)=0$; $\forall u,v\in V$.
+        \item $f(-u,v)=f(u,-v)=-f(u,v)$; $\forall u,v\in V$
+        \item $f\left(\sum\limits_ia^iu_i,\sum\limits_jb^jv_j\right)=f\left(a^iu_i,b^jv_j\right)=a^ib^jf(u_i,v_j)$; $\forall a^i,b^j\in\mathbb{K}$, $\forall u_i,v_j\in V$.
+    \end{enumerate}
+\end{proposition}
+\begin{proof}
+    $\hspace{1mm}$
+    \begin{enumerate}[label=(\roman*)]
+        \item Sea $0=v-v$, $\forall v\in V$,
+        \[f(u,0)=f(u,v-v)\overset{\textit{(ii),(iv)}}{=}f(u,v)-f(u,v)=0\]
+        \[f(0,u)=f(v-v,u)\overset{\textit{(i),(iii)}}{=}f(v,u)-f(v,u)=0\]
+        \item Sea $-v=(-1)\cdot v$, $(-1)\in\mathbb{K}$, $\forall u,v\in V$,
+        \[f(-u,v)\overset{\textit{(iii)}}{=}-f(u,v)\]
+        \[f(u,-v)\overset{\textit{(iv)}}{=}-f(u,v)\]
+        \item Sean $\forall v_j,u_i\in V$ y $\forall a_i,b_j\in\mathbb{K}$,
+        \[
+        f\left(a^iu_i,b^jv_j\right)\overset{\textit{(i),(ii)}}{=}f(a^iu_i,b^jv_j)\overset{\textit{(iii),(iv)}}{=}a^ib^jf(u_i,v_j)
+        \]
+    \end{enumerate}
+    donde hemos usado las condiciones de la definición de forma bilineal.
+\end{proof}
+\noindent Veamos ahora una definición del \textbf{producto escalar}.
+\begin{definition}
+    Dado un espacio vectorial real $V$, definimos el producto escalar como una aplicación
+    \[\scalar{\hspace{1mm}}{\hspace{1mm}}:V\times V\to\mathbb{R}\]
+    verificando,
+    \begin{enumerate}[label=(\roman*)]
+        \item $\scalar{u}{v}=\scalar{v}{u}$, $\forall u,v\in V$
+        \item $\scalar{u+v}{w}=\scalar{u}{w}+\scalar{v}{w}$, $\forall u,v,w\in V$
+        \item $\scalar{\lambda u}{v}=\lambda\scalar{u}{v}$, $\forall u,v,\in V$, $\forall\lambda\in\mathbb{R}$
+        \item No degenerada, es decir, $\nexists v\neq 0$, $v\in V$, tal que $\scalar{v}{w}=0$, $\forall w\neq0\in V$
+    \end{enumerate}
+\end{definition}
+
+\begin{proposition}
+    El producto escalar es una forma bilineal.
+\end{proposition}
+\begin{proof}
+    Para ver que el producto escalar sea una forma bilineal, debe satisfacer:
+    \[\scalar{u_1+u_2}{v}=\scalar{u_1}{v}+\scalar{u_2}{v}\]
+    \[\scalar{u}{v_1+v_2}=\scalar{u}{v_1}+\scalar{u}{v_2}\]
+    \[\scalar{\lambda\cdot u}{v}=\lambda\cdot\scalar{u}{v}\]
+    \[\scalar{u}{\lambda\cdot v}=\lambda\cdot\scalar{u}{v}\]
+    pero es trivial ver que las dos primeras condiciones se satisfacen por \textit{(ii)}, y las dos últimas, por \textit{(iii)}, que vienen de la definición de producto escalar, luego es una forma bilineal.
+\end{proof}
+\noindent Definimos ahora dos tipos particulares de formas bilineales, las \textbf{simétricas} y las \textbf{antisimétricas}.
+\begin{definition}
+    Una forma bilineal $f:V\times V\to\mathbb{K}$ es simétrica si verifica:
+    \[f(x,y)=f(y,x);\hspace{3mm}\forall x,y\in V\]
+\end{definition}
+\begin{definition}
+    Una forma bilineal $f:V\times V\to\mathbb{K}$ es antisimétrica si verifica:
+    \[f(x,y)=-f(y,x);\hspace{3mm}\forall x,y\in V\]
+\end{definition}
+\begin{proposition}
+    El producto escalar es una forma bilineal simétrica.
+\end{proposition}
+\begin{proof}
+    Por la definición de producto escalar, la condición \textit{(i)} nos dice que es una forma simétrica.
+\end{proof}
+\begin{lemma}
+\label{Lema1.30}
+    Sea $V$ un $\mathbb{K}$-espacio vectorial y sea $f:V\times V\to\mathbb{K}$ una forma bilineal. Si $\mathbb{K}=\mathbb{R}$ ó $\mathbb{K}=\mathbb{C}$, entonces se verifica:
+    \[f\text{ es antisimétrica }\Leftrightarrow f(x,x)=0,\text{ para cada }x\in V\]
+\end{lemma}
+\begin{proof}
+    Si $f$ es antisimétrica, entonces $f(x,x)=-f(x,x)$, luego, sumando $f(x,x)$ a ambos lados, tenemos $2f(x,x)=0$, con $2\in\mathbb{C}$, luego $f(x,x)=0$.\\
+    Si $f(x,x)=0$, $\forall x\in V$, tal que
+    \[0=\cancelto{0}{f(u+v,u+v)}=\cancelto{0}{f(u,u)}+f(u,v)+f(v,u)+\cancelto{0}{f(v,v)}\]
+    luego, $f(u,v)+f(v,u)=0$, y entonces $f(u,v)=-f(v,u)$, luego es antisimétrica.
+\end{proof}
+\noindent Ahora veremos que cualquier forma bilineal puede descomponerse en una forma \textbf{simétrica} y otra \textbf{antisimétrica}, cosa que también pasará con los tensores.
+\begin{proposition}
+    Toda forma bilineal puede descomponerse como suma de una forma bilineal simétrica y una antisimétrica.
+\end{proposition}
+\begin{proof}
+    Sea una forma bilineal $f:V\times V\to\mathbb{K}$, consideramos las aplicaciones $f_S,f_T:V\times V\to\mathbb{K}$ definidas por
+    \[f_S(x,y)=\frac{1}{2}\brackets{f(x,y)+f(y,x)}\]
+    \[f_T(x,y)=\frac{1}{2}\brackets{f(x,y)-f(y,x)}\]
+    Vamos a ver que son formas bilineales:\\
+    Empezamos por $f_S$,
+    \[\begin{array}{rl}
+    f_S(x_1+x_2,y) & = \frac{1}{2}\brackets{f(x_1+x_2,y)+f(y,x_1+x_2)} = \frac{1}{2}\brackets{f(x_1,y)+f(x_2,y)+f(y,x_1)+f(y,x_2)}\\ \\
+    &=\frac{1}{2}\brackets{f(x_1,y)+f(y,x_1)}+\frac{1}{2}\brackets{f(x_2,y)+f(y,x_2)}=f_S(x_1,y)+f_S(x_2,y)\checkmark
+    \end{array}\]
+    \[\begin{array}{rll}
+    f_S(x,y_1+y_2)&=\frac{1}{2}\brackets{f(x,y_1+y_2)+f(y_1+y_2,x)}=\frac{1}{2}\brackets{f(x,y_1)+f(x,y_2)+f(y_1,x)+f(y_2,x)}\\ \\
+    &=\frac{1}{2}\brackets{f(x,y_1)+f(y_1,x)}+\frac{1}{2}\brackets{f(x,y_2)+f(y_2,x)}=f_S(x,y_1)+f_S(x,y_2)\checkmark
+    \end{array}\]
+    \[\begin{array}{rl}
+    f_S(\lambda\cdot x,y)&=\frac{1}{2}\brackets{f(\lambda\cdot x,y)+f(y,\lambda\cdot x)}=\frac{1}{2}\brackets{\lambda\cdot f(x,y)+\lambda f(y,x)}=\lambda\frac{1}{2}\brackets{f(x,y)+f(y,x)}=\lambda f_S(x,y)\checkmark\end{array}\]
+    \[f_S(x,\lambda\cdot y)=\frac{1}{2}\brackets{f( x,\lambda\cdot y)+f(\lambda\cdot y, x)}=\frac{1}{2}\brackets{\lambda\cdot f(x,y)+\lambda f(y,x)}=\lambda\frac{1}{2}\brackets{f(x,y)+f(y,x)}=\lambda f_S(x,y)\checkmark \]
+    Veamos que $f_S$ es simétrica:
+    \[f_S(x,y)=\frac{1}{2}\brackets{f(x,y)+f(y,x)}=\frac{1}{2}\brackets{f(y,x)+f(x,y)}=f(y,x)\checkmark\]
+    Seguimos con $f_T$,
+     \[f_T(x_1+x_2,y)=\frac{1}{2}\brackets{f(x_1+x_2,y)-f(y,x_1+x_2)}=\frac{1}{2}\brackets{f(x_1,y)+f(x_2,y)-f(y,x_1)-f(y,x_2)}=\]
+    \[=\frac{1}{2}\brackets{f(x_1,y)-f(y,x_1)}+\frac{1}{2}\brackets{f(x_2,y)-f(y,x_2)}=f_T(x_1,y)+f_T(x_2,y)\checkmark\]
+    \[f_T(x,y_1+y_2)=\frac{1}{2}\brackets{f(x,y_1+y_2)-f(y_1+y_2,x)}=\frac{1}{2}\brackets{f(x,y_1)+f(x,y_2)-f(y_1,x)-f(y_2,x)}=\]
+    \[=\frac{1}{2}\brackets{f(x,y_1)-f(y_1,x)}+\frac{1}{2}\brackets{f(x,y_2)-f(y_2,x)}=f_T(x,y_1)+f_T(x,y_2)\checkmark\]
+    \[f_T(\lambda\cdot x,y)=\frac{1}{2}\brackets{f(\lambda\cdot x,y)-f(y,\lambda\cdot x)}=\frac{1}{2}\brackets{\lambda\cdot f(x,y)-\lambda f(y,x)}=\lambda\frac{1}{2}\brackets{f(x,y)-f(y,x)}=\lambda f_T(x,y)\checkmark\]
+    \[f_T(x,\lambda\cdot y)=\frac{1}{2}\brackets{f( x,\lambda\cdot y)-f(\lambda\cdot y, x)}=\frac{1}{2}\brackets{\lambda\cdot f(x,y)-\lambda f(y,x)}=\lambda\frac{1}{2}\brackets{f(x,y)-f(y,x)}=\lambda f_T(x,y)\checkmark\]
+    Veamos que $f_T$ es antisimétrica:
+    \[f_T(x,y)=\frac{1}{2}\brackets{f(x,y)-f(y,x)}=\frac{1}{2}\brackets{-f(y,x)+f(x,y)}=-\frac{1}{2}\brackets{f(y,x)-f(x,y)}=-f(y,x)\checkmark\]
+    Para cada par de vectores $x,y\in V$ tenemos:
+    \[f_S(x,y)+f_T(x,y)=\frac{1}{2}\brackets{f(x,y)+\cancel{f(y,x)}}+\frac{1}{2}\brackets{f(x,y)-\cancel{f(y,x)}}=f(x,y)\]
+\end{proof}
+\subsubsection{Formas cuadráticas}
+En este apartado vamos a ver qué son las \textbf{formas cuadráticas}.
+\begin{definition}
+    Sea $V$ un $\mathbb{K}$-espacio vectorial y sea $f:V\times V\to\mathbb{K}$ una forma bilineal en $V$. Se llama \textbf{forma cuadrática} asociada a $f$, a la aplicación,
+    \[\begin{matrix}
+        \Phi: & V & \to &\mathbb{K}\\
+         & \Phi(x) & \mapsto & f(x,x)
+    \end{matrix}\]
+    $\forall x\in V$.
+\end{definition}
+\noindent Veamos algunas propiedades.
+\begin{proposition}[Propiedades]
+    Sea $\Phi:V\to\mathbb{K}$ la forma cuadrática asociada a la función bilineal $f$, para cualesquiera $\lambda\in\mathbb{K}$ y $x,y\in V$ se verifica:
+    \begin{enumerate}[label=(\roman*)]
+        \item $\Phi(0)=0$
+        \item $\Phi(\lambda x)=\lambda^2\Phi(x)$
+        \item $\Phi(x,y)=\Phi(x)+\Phi(y)+f(x,y)+f(y,x)$
+    \end{enumerate}
+\end{proposition}
+\begin{proof}
+    \begin{enumerate}[label=(\roman*)]
+        \item $\Phi(0)=f(0,0)=0\qedh$
+        \item $\Phi(\lambda x)=f(\lambda x,\lambda x)=\lambda (x,\lambda x)=\lambda^2f(x,x)=\lambda^2\Phi(x)\qedh$
+        \item $\Phi(x+y)=f(x+y,x+y)=f(x,x)+f(y,y)+f(x,y)+f(y,x)=\Phi(x)+\Phi(y)+f(x,y)+f(y,x)$
+    \end{enumerate}
+\end{proof}
+\begin{note}
+    Distintas formas bilineales pueden dar lugar a la misma forma cuadrática.
+\end{note}
+\noindent Veamos que una forma cuadrática puede descomponerse como \textbf{suma} de una forma bilineal simétrica y otra antisimétrica.
+\begin{proposition}
+    Si $f$ es una forma bilineal simétrica y $\Phi$ es la forma cuadrática asociada a $f$, entonces para cada forma bilineal antisimétrica $g$ se tiene,
+    \[\Phi(x)=f(x,x)=f(x,x)+g(x,x)=(f+g)(x,x)\]
+\end{proposition}
+\begin{proof}
+    Si $g$ es antisimétrica, entonces $g(x,x)=-g(x,x)\Rightarrow g(x,x)=0$, luego,
+    \[\Phi(x)=f(x,x)=f(x,x)+0=f(x,x)+g(x,x)\]
+    al ser $f$ y $g$ aplicaciones bilineales, entonces
+    \[(f+g)(x,x)=f(x,x)+g(x,x)\]
+    luego,
+    \[\Phi(x)=f(x,x)=(f+g)(x,x)\]
+\end{proof}
+\noindent Por tanto, $\Phi$ también será la forma cuadrática asociada a $f+g$. Luego, podemos decir que la forma cuadrática asociada a una forma bilineal solo depende de la parte simétrica de ésta.\\
+Vemos entonces que de entre todas las formas bilineales que dan lugar a la misma forma cuadrática (existen infinitas), solo existe una forma que es simétrica.
+\begin{proposition}
+    Dada una forma cuadrática $\Phi$ en $V$, existe una única forma bilineal simétrica $f_P$, cuya forma cuadrática asociada es $\Phi$. Llamada forma polar de $\Phi$.
+\end{proposition}
+\begin{proof}
+\begin{tabular}{c|}
+     $\Rightarrow$ \\ \hline
+\end{tabular} 
+    Para cada forma bilineal $f$ cuya forma cuadrática asociada sea $\Phi$, se tiene por la propiedad \textit{(iii)}, $f(x,y)+f(y,x)=\Phi(x+y)-\Phi(x)-\Phi(y)$. \\
+    Si imponemos que $f$ sea simétrica, entonces $2f(x,y)=\Phi(x+y)-\Phi(x)-\Phi(y)$, con lo cual, $f$ está unívocamente determinada por:
+    \[f(x,y)=\frac{1}{2}\brackets{\Phi(x+y)-\Phi(x)-\Phi(y)}\]
+    y por tanto, es única.\\
+\begin{tabular}{c|}
+     $\Leftarrow$ \\ \hline
+\end{tabular} 
+Sea la forma bilineal $f$, definida por $f(x,y)=\frac{1}{2}\brackets{\Phi(x+y)-\Phi(x)-\Phi(y)}$, vemos que es simétrica:
+\[f(x,y)=\frac{1}{2}\brackets{f(x+y,x+y)-f(x,x)-f(y,y)}=\]\[=\frac{1}{2}\brackets{\cancel{f(x,x)}+\cancel{f(y,y)}+f(x,y)+f(y,x)-\cancel{f(x,x)}-\cancel{f(y,y)}}=\]\[=\frac{1}{2}\brackets{f(x,y)+f(y,x)}\]
+luego,
+\[2f(x,y)=f(x,y)+f(y,x)\Rightarrow \cancel{2}f(x,y)-\cancel{f(x,y)}=f(y,x)\Rightarrow f(x,y)=f(y,x)\]
+luego, $f$ es antisimétrica. 
+Hemos demostrado que existe una única forma bilineal simétrica, cuya forma cuadrática asociada es $\Phi$.
+\end{proof}
+\begin{corollary}
+    Sea $\Phi$ una forma cuadrática en $V$ asociada a la forma bilineal $g$. La forma polar $f_P$ de $\Phi$ se puede obtener como:
+    \begin{enumerate}[label=(\roman*)]
+        \item $f_P(x,y)=\frac{1}{2}\brackets{\Phi(x+y)-\Phi(x)-\Phi(y)}$
+        \item $f_P(x,y)=\frac{1}{4}\brackets{\Phi(x+y)-\Phi(x-y)}$
+        \item $f_P(x,y)=\frac{1}{2}\brackets{g(x,y)+g(y,x)}$
+    \end{enumerate}
+\end{corollary}
+\begin{proof}
+\begin{enumerate}[label=(\roman*)]
+    \item Ya lo hicimos antes. $\qedh$
+    \item Sabemos que $\Phi(x+y)=\Phi(x)+\Phi(y)+2f_P(x,y)$ y que $\Phi(x-y)=f(x-y,x-y)=f(x,x)+f(y,y)-f(x,y)-f(y,x)=\Phi(x)+\Phi(y)-2f_P(c,y)$, luego, restando ambas expresiones:
+    \[\Phi(x+y)-\Phi(x-y)=4f_P(x,y)\Rightarrow f_P(x,y)=\frac{1}{4}\brackets{\Phi(x+y)-\Phi(x-y)}\qedh\]
+    \item Si $\Phi$ es la forma cuadrática asociada a $g$, entonces
+    \[\Phi(x+y)=\cancel{\Phi(x)}+\cancel{\Phi(y)}+g(x,y)+g(y,x)=\cancel{\Phi(x)}+\cancel{\Phi(y)}+2f_P(x,y)\]
+    luego,
+    \[f_P(x,y)=\frac{1}{2}\brackets{g(x,y)+g(y,x)}\hspace{3mm}\qedhere\]
+\end{enumerate}
+\end{proof}
+\subsubsection*{Matriz asociada a una forma cuadrática}
+Dada una forma cuadrática $\Phi$ en $V$ y dada una base $B$ de $V$, llamaremos matriz asociada a $\Phi$ respecto de la base $B$ a la matriz asociada respecto de la base $B$ de la forma polar de $\Phi$. En particular, la matriz asociada a una forma cuadrática es siempre una matriz simétrica. Llamaremos rango de $\Phi$ al rango $rg(\Phi)$ de su matriz asociada, que coincide con el rango de su forma polar. Luego,
+\[\Phi(x)=X^t\cdot A\cdot X=\sum\limits_{i,j=1}^na_{ij}x_ix_j\overset{a_{ij}=a_{ji}}{\Rightarrow}\Phi(x_1,\dots,x_n)=\sum\limits_{i=1}^na_{ii}x_i^2+2\sum\limits_{i<j}a_{ij}x_ix_j\]
+Luego,
+\[\begin{array}{rl}\text{Para }n=2:&\Phi(x,y)=a_{11}x^2+a_{22}y^2+2a_{12}xy\\
+\text{Para }n=3:&\Phi(x,y)=a_{11}x^2+a_{22}y^2+a_{33}z^2+2a_{12}xy+2a_{13}xz+2a_{23}yz
+\end{array}\]
+\subsubsection*{Conjugación respecto de una forma cuadrática}
+Veremos ahora los vectores conjugados a una forma cuadrática, junto algunas propiedades que veremos que también usaremos en la definición de producto escalar.
+\begin{definition}
+    Sea $\Phi:V\to\mathbb{K}$ una forma cuadrática, y sea $f_P:V\times V\to\mathbb{K}$ su forma polar. Dos vectores $x,y\in V$ se dice que son conjugados respecto de $\Phi$ si $f_P(x,y)=0$. Se dice que el vector $x$ es autoconjugado si es conjugado consigo mismo, es decir, $\Phi(x)=0$.\\
+    Dado un conjunto $S\subseteq V$, consideremos el conjunto de los vectores de $V$ conjugados con todos los vectores de $S$:
+    \[S^C=\curlybraces{x\in V\left|\right.f_P(x,y)=0,\hspace{3mm}\forall x,y\in V}\]
+\end{definition}
+\begin{proposition}
+    Para cada subconjunto no vacío $S$ de $V$, el conjunto $S^C$ es un subespacio vectorial de $V$. Además, $S^C=(L(S))^C$.
+\end{proposition}
+\begin{proof}
+    Sean $a,b\in\mathbb{K}$ y $u,v\in S^C$ arbitrarios, entonces para cada $y\in S$ se tiene,
+    \[f_P(a\cdot u+b\cdot v,y)=a\cdot f_P(u,y)+b\cdot f_P(v,y)=0\]
+    Luego, $a\cdot u+b\cdot v\in S^C$, y en consecuencia, $S^C$ es subespacio vectorial de $V$.$\qedh$\\ \\
+    Por otra parte, puesto que $S\subseteq L(S)$, se tiene que $(L(S))^C\subseteq S^C$. Para la otra inclusión, consideramos $x\in S^C$ y sea $y\in L(S)$ arbitrario. Entonces $y$ se escribe como combinación lineal de vectores de $S$,
+    \[y=a_1s_1+\dots a_ks_k;\hspace{4mm}a_1,\dots,a_k\in\mathbb{K};\hspace{2mm}s_1,\dots,s_k\in S\]
+    Así pues,
+    \[f_P(x,y)=f_P(x,a_1s_1+\dots a_ks_k)=a_1f_P(x,s_1)+\dots a_kf_P(x,s_k)=0\]
+    ya que $x\in S^C$ y los $s_i\in S$. Por tanto, $x\in(L(S))^C$ y así, $S^C\subseteq(L(S))^C$. Luego, hemos demostrado que $S^C=(L(S))^C$ \qedhere
+\end{proof}
+\begin{definition}
+    Se llama núcleo de la forma cuadrática $\Phi$ al subespacio $V$ a
+    \[N(\Phi)=V^C=\curlybraces{x\in V\left|\right.f_P(x,y)=0;\hspace{2mm}\forall y\in V}\]
+    Se dice que $\Phi$ es no degenerada si $N(\Phi)=0$, es decir, si el único vector que es conjugado a todos los vectores de $V$ es el vector 0.
+\end{definition}
+\subsubsection{Signatura de una forma cuadrática real}
+
+\begin{theorem}
+    Sea $V$ un $\mathbb{R}$-espacio vectorial de dimensión finita y sea $\Phi:V\to\mathbb{R}$ una forma cuadrática. Existe una base de $V$ para la cual, la matriz asociada a $\Phi$ es diagonal.
+\end{theorem}
+\begin{theorem}[Ley de inercia de Sylvester]
+    Sea $V$ un $\mathbb{R}$-espacio vectorial de dimensión finita y sea $\Phi:V\to\mathbb{R}$ una forma cuadrática. Si $D_1$ y $D_2$ son matrices diagonales asociadas a $\Phi$ respecto de distintas bases $B_1$ y $B_2$, entonces el número de elementos positivos y elementos negativos en $D_1$ y $D_2$, es el mismo.
+\end{theorem}
+\begin{proof}
+    Como el núcleo de elementos positivos más el de negativos es en cualquier caso igual al rango de $\Phi$, por lo que, bastará probar que el número de positivos será igual para todas las bases de $V$ que proporcionen una forma diagonal.\\
+    Sean pues $B_1$ y $B_2$ bases de $V$ para las cuales la matriz de $\Phi$ es diagonal y de forma que tienen en la diagonal, y de forma que tienen en la diagonal $p$ y $t$ elementos positivos respectivamente, y veamos que $p=t$. Escribiendo,
+    \[B_1=\curlybraces{u_1,u_2,\dots,u_p,u_{p+1},\dots,u_n}\]
+    \[B_2=\curlybraces{v_1,v_",\dots,v_t,v_{t+1},\dots,v_n}\]
+    las matrices asociadas a $\Phi$ respecto de $B_1$ y $B_2$ serán,
+    \[\begin{pmatrix}
+        \Phi(u_1) & 0 & \dots & 0\\
+        0 & \Phi(u_2) & \dots & 0\\
+        \vdots & \vdots & \ddots & \vdots\\
+        0 & 0 & \dots & \Phi(u_n)
+    \end{pmatrix}\hspace{5mm}\text{y}\hspace{5mm}\begin{pmatrix}
+        \Phi(v_1) & 0 &\dots & 0\\
+        0 & \Phi(v_2) & \dots & 0\\
+        \vdots & \vdots & \ddots & \vdots\\
+        0 & 0 & \doteq & \Phi(v_n)
+    \end{pmatrix}\]
+    Por hipótesis, tenemos que
+    \[\Phi(u_1)>0,\Phi(u_2)>0,\dots,\Phi(u_p)>0,\Phi(u_{p+1})\leq0,\dots,\Phi(u_n)\leq0\]
+    \[\Phi(v_1)>0,\Phi(v_2)>0,\dots,\Phi(v_t)>0,\Phi(v_{t+1})\leq0,\dots,\Phi(v_n)\leq0\]
+    Considerando los subespacios de $V$ siguientes,
+    \[U=L(u_1,\dots,u_p),\hspace{7mm}W=L(v_{t+1},\dots,v_n)\]
+    Para cada $0\neq x\in U$, se verifica $\Phi(x)>0$, y para cada $y\in W$, se verifica $\Phi(y)\leq0$. Por tanto, es evidente que $U\cup W=\curlybraces{0}$ y por tanto, $dim(U+W)=dimU+dimW=p+n-t$. Como $U+W\leq V$, entonces $p+\cancel{n}-t\leq \cancel{n}\Rightarrow p\leq t$. Por simetría, llegamos también a que $t\leq p$, por tanto, $p=t$, luego, hay el mismo número de elementos negativos y positivos. 
+\end{proof}
+
+     \noindent Llamaremos \textbf{signatura} de la forma cuadrática real $\Phi$ al par $sg(\Phi)=(p,1)$, donde $p$ es el número de elementos positivos y $q$, el de negativos en una forma diagonal de $\Phi$.\\
+    Notemos que $p$ es igual al número de autovalores positivos de la matriz de $\Phi$, y $q$ es igual al número de autovalores negativos.\\
+    Por otro lado, el rango de $\Phi$ es igual al número de filas no nulas de su forma diagonal, y por tanto, como ya hemos mencionado, $rg(\Phi)=p+q$.
+
+\begin{theorem}
+    Sea $\Phi:V\to\mathbb{R}$ una forma cuadrática real, y llamemos $n=dim V$, entonces,
+    \begin{enumerate}[label=(\roman*)]
+        \item $\Phi$ es definida positiva si y solo si $sg(\Phi)=(n,0)$
+        \item $\Phi$ es definida negativa si y solo si $sg(\Phi)=(0,n)$
+        \item $\Phi$ es semidefinida positiva si y solo si $sg(\Phi)=(r,0)$ con $r<n$
+        \item $\Phi$ es semidefinida negativa si y solo si $sg(\Phi)=(0,r)$ con $r<n$
+    \end{enumerate}
+\end{theorem}
+\begin{proof}
+    \begin{enumerate}[label=(\roman*)]
+        \item Supongamos que $\Phi$ es definida positiva, es decir, $\Phi(x)>0;\forall0\neq x\in V$ y sea $B=\curlybraces{e_1,e_2,\dots,e_n}$ una base de $V$ para la cual la matriz asociada a $\Phi$ es diagonal,
+        \[\begin{pmatrix}
+            d_1 & 0 & \dots & 0\\
+            0 & d_1 & \dots & 0\\
+            \vdots & \vdots & \ddots & \vdots\\
+            0 & 0 & \dots & d_n
+        \end{pmatrix}\]
+        y notemos que, por la propia definición de matriz asociada a una forma cuadrática, se tiene $d_i=\Phi(e_i)$. Así pues, siendo $\Phi$ definida positiva, se obtiene $d_1>0,\dots,d_n>0$ y por tanto, $sg(\Phi)=(n,0)\checkmark$\\
+        Supongamos ahora que $sg(\Phi)=(n,0)$. Entonces con la misma notación de antes, se tiene $d_1>0,\dots,d_n>0$ y, en consecuencia, si un vector cualquiera no nulo $x=(x_1,\dots,x_n)_B$ de $V$, se verifica $\Phi(x)=d_1x_1^2+\dots +d_nx_n^2>0$ por ser cada $d_i>0\qedh$
+        \item Supongamos que $\Phi$ es definida negativa, es decir, $\Phi(x)<0;\forall0\neq x\in V$ y sea $B=\curlybraces{e_1,e_2,\dots,e_n}$ una base de $V$ para la cual la matriz asociada a $\Phi$ es diagonal,
+        \[\begin{pmatrix}
+            d_1 & 0 & \dots & 0\\
+            0 & d_1 & \dots & 0\\
+            \vdots & \vdots & \ddots & \vdots\\
+            0 & 0 & \dots & d_n
+        \end{pmatrix}\]
+        y notemos que, por la propia definición de matriz asociada a una forma cuadrática, se tiene $d_i=\Phi(e_i)$. Así pues, siendo $\Phi$ definida negativa, se obtiene $d_1<0,\dots,d_n<0$ y por tanto, $sg(\Phi)=(0,n)\checkmark$\\
+        Supongamos ahora que $sg(\Phi)=(0,n)$. Entonces con la misma notación de antes, se tiene $d_1<0,\dots,d_n<0$ y, en consecuencia, si un vector cualquiera no nulo $x=(x_1,\dots,x_n)_B$ de $V$, se verifica $\Phi(x)=d_1x_1^2+\dots +d_nx_n^2<0$ por ser cada $d_i<0\qedh$
+        \item Por el teorema de Sylvester, sabemos que existen $r$ valores propios positivos y $n-r$ valores propios que son cero (ya que  no es definida positiva y no hay valores propios negativos). Esto da lugar a una signatura de $(r,0)$ con $r<n$, ya que si $r$ fuera igual a $n$, sería definida positiva, lo cual contradice nuestra suposición inicial de que es solamente semidefinida positiva.$\checkmark$\\ 
+        Inversamente, si $sg(\Phi)=(r,0)$ con $r<n$, entonces la matriz asociada $A$ a la forma cuadrática $\Phi$ tiene $r$ valores propios positivos y $n-r$ ceros. Esto significa que para cualquier vector $v$, $\Phi(v)=v^TAv$ será una suma de términos no negativos, dado que los valores propios negativos corresponden a términos negativos en esta suma y no hay ninguno. Por lo tanto, $\Phi(v)\geq0$ para todo $v$, lo que significa que es semidefinida positiva.$\qedh$
+        \item Supongamos que $\Phi$ es semidefinida negativa. Esto significa que para todo vector $v\in V$, $\Phi(v)\geq0$. Dado que $\Phi$ no es definida negativa, no todos los valores propios pueden ser negativos (de lo contrario, $\Phi(v)<0$ para todo $v\neq0$). Entonces, algunos de los valores propios deben ser cero. La signatura $sg(\Phi)$ cuenta el número de valores propios negativos y positivos de la matriz simétrica asociada a $\Phi$. Si $\Phi$ es semidefinida negativa, entonces no tiene valores propios positivos, lo que implica que $sg(\Phi)=(0,r)$ con $r$ siendo el número de valores propios negativos, y $r<n$ porque si $r$ fuera igual a $n$, sería definida negativa.$\checkmark$\\ \\
+         Ahora supongamos que $sg(\Phi)=(0,r)$ con r<n. Esto indica que hay $r$ valores propios negativos y $n-r$ ceros (puesto que no hay valores propios positivos). Por lo tanto, para cualquier vector $v$, la forma cuadrática $\Phi(v)=v^TAv$ será una suma de términos no positivos, debido a que los valores propios positivos resultarían en términos positivos en esta suma, y no hay ninguno. Esto significa que $\Phi(v)\leq0$ para todo $v\in V$, y por lo tanto $\Phi$ es semidefinida negativa.
+    \end{enumerate}
+\end{proof}
+
+\subsection{Aplicaciones multilineales: Definición y propiedades}
+%$f:V\times V\to \mathbb{R}$...y luego con más términos
+Veamos ahora las aplicaciones multilineales, que serán una extensión de las bilineales.
+\begin{definition}
+    Sea $(V,+,\cdot)$ un $\mathbb{K}$-espacio vectorial, diremos que una aplicación\\ $f:V\times\overset{n)}{\dots}\times V\longrightarrow\mathbb{K}$ es multilineal si:
+    \begin{enumerate}[label=(\roman*)]
+        \item $f(x_1,x_2,\dots,x_i+y_i,\dots,x_n)=f(x_1,\dots,x_i,\dots,x_n)+f(x_1,\dots,y_i,\dots,x_n)$
+        \item $f(x_1,x_2,\dots,\lambda\cdot x_i,\dots,x_n)=\lambda\cdot f(x_1,\dots,x_i,\dots,x_n)$
+    \end{enumerate}
+\end{definition}
+
+\begin{definition}
+    Sea $f:V\times\overset{n)}{\dots}\times V\longrightarrow\mathbb{K}$ una aplicación multilineal. Se dice que $f$ es alternada o antisimétrica si $f(x_{\sigma(1)},x_{\sigma(2)},\dots,x_{\sigma(n)})=sgn(\sigma)\cdot f(x_1,\dots,x_n); \sigma\in S_n$.
+\end{definition}
+
+
+   \noindent Una aplicación multilineal alternada se llama una $n$-forma lineal.
+
+
+\begin{proposition}
+    Sea $(V,+,\cdot)$ un $\mathbb{K}$-espacio finito dimensional. 
+    Sea $f:V\times\overset{m)}{\dots}\times V\longrightarrow\mathbb{K}$ una aplicación multilineal, entonces $f$ está determinada por la imagen de una base.
+\end{proposition}
+
+\begin{proof}
+    Sea $\curlybraces{e_1,\dots,e_n}$ base de $V$, $\forall x_1,\dots, x_m\in V$
+    \[\begin{matrix}
+        x_1=a^{11}e_1+a^{21}e_2+\dots+a^{n1}e_n, & a^{i1}\in\mathbb{K}\\
+        x_2=a^{12}e_1+a^{22}e_2+\dots+a^{n2}e_n, & a^{i2}\in\mathbb{K}\\
+        \vdots & \\
+        x_m=a^{1m}e_1+a^{2m}e_2+\dots+a^{nm}e_n, & a^{im}\in\mathbb{K}
+    \end{matrix}\]
+    \[f(x_1,\dots,x_m)=f\left(\sum\limits_{i_1=1}^na^{i_1}e_{i_1}, x_2,\dots, x_m\right)=a^{i_11}f\left(e_{i_1},a^{i_22}e_{i_2},\dots,x_m\right)=\] 
+
+    \[=a^{i_11}\cdot a^{i_21}\cdot f(e_{i_11},e_{i_22},\dots,x_m)=\]
+    
+    \[=a^{i_11}a^{i_22}\dots a^{i_mm}\cdot f(e_{i_11},e_{i_22},\dots,e_{i_mm})\]
+
+    entonces tenemos $n^m$ combinaciones $\Rightarrow$ $n!$ combinaciones $\neq0$
+\end{proof}
+
+
+\section{Álgebra de Tensores}
+Llegamos a lo groso del documento, el \textbf{Álgebra de Tensores}. En este apartado vamos a ver qué es un tensor de forma matemática y cómo trabajar con ellos. También se mencionará cómo trabajan los físicos con los tensores, que será muy parecido a las Notas de la parte de \textit{Notación de Einstein}.
+ \subsection{Producto tensorial: Caso de dos términos}
+ Vamos a ver qué es el \textbf{producto tensorial} y cómo los tensores se definen a partir de este.
+\begin{proposition}
+    Sea $V$ un $\mathbb{K}$-espacio vectorial, $\scalar{\cdot}{\cdot}$ el producto escalar euclídeo y $B=\curlybraces{v_1,\dots,v_n}$ base de $V$, 
+    \[\begin{array}{cccl}
+        f_v: & V & \to & V^*\\
+         & v & \mapsto & f_v(v)=\scalar{v}{\cdot}
+    \end{array}\]
+     $f_v$ es una aplicación lineal, concretamente es un isomorfismo.
+\end{proposition}
+\begin{proof}
+    Vemos que $f_v$ es aplicación lineal,
+    \[f_v(w_1+w_2)=\scalar{v}{w_1+w_2}=\scalar{v}{w_1}+\scalar{v}{w_2}=f_v(w_1)+f_v(w_2)\checkmark \]
+    \[f_v(\lambda\cdot w)=\scalar{v}{\lambda\cdot w}=\lambda\scalar{v}{w}=\lambda f_v(w)\checkmark\]
+    para $\forall\lambda\in\mathbb{K}$ y $\forall w_1,w_2,w\in V$. Luego, es aplicación lineal.\\ \\
+    Veamos que es isomorfo demostrando que es biyectivo, pues ya hemos visto que es aplicación lineal.\\
+    Sabemos que $ker\curlybraces{f_v}=\curlybraces{0}\Leftrightarrow f_v$ es inyectiva. Luego, vemos si $ker\curlybraces{f_v}=\curlybraces{0}$:
+    \[ker\curlybraces{f_v}=\curlybraces{w\in V,f_v(w)=0}=\curlybraces{w\in V;\scalar{v}{w}=0\Leftrightarrow w=0}\]
+    Por tanto, $ker\curlybraces{f_v}=\curlybraces{0}$ y así, $f_v$ es inyectiva. $\checkmark$\\ \\
+    Usando el Primer Teorema de isomorfía, tenemos que $dim(V)=\cancelto{0}{dim(ker\curlybraces{f_v})}+dim(Im f_v)$, pero como la $dim B=dim B^*$, siendo $B$ base de $V$ y $B^*$ base de $V^*$, entonces $dimV=dimV^*$, y por tanto, $dimV=dimImf_v=dimV^*$, luego $Imf_v$ es $V^*$ y por tanto, $f_v$ es sobreyectiva. $\checkmark$\\
+    Luego, $f_v$ es un isomorfismo.
+\end{proof}
+\noindent Veamos cómo se define el producto tensorial y sus propiedades.
+\begin{definition}
+    Sea $V$ un $\mathbb{K}$-espacio vectorial, $V^*$ el dual de $V$, y $g^1,g^2\in V^*$ aplicaciones lineales, tal que $g^1:V\to\mathbb{K}$ y $g^2:V\to\mathbb{K}$. Así, definimos el producto tensorial como,
+    \begin{enumerate}[label=(\roman*)]
+        \item Producto tensorial entre dos formas $g^1,g^2\in V^*$,
+        \[\begin{array}{cccl}
+            \ptensor{g^1}{g^2}: & V\times V & \to & \mathbb{K}\\
+            & (v,w) & \mapsto & g^1(v)g^2(w)
+        \end{array}\]
+        \item Producto tensorial entre dos vectores $v_1,v_2\in V$,
+        \[\begin{array}{cccl}
+            \ptensor{v_1}{v_2}: & V^*\times V^* & \to & \mathbb{K}\\
+             & (f,g) & \mapsto & f(v_1)g(v_2)
+        \end{array}\]
+        \item Producto tensorial de una forma y un vector $v_1\in V$, $f^1\in V^*$,
+        \[\begin{array}{cccl}
+            \ptensor{v_1}{f^1}: & V^*\times V & \to & \mathbb{K}\\
+             & (g,w) & \mapsto & g(v_1)f^1(w)
+        \end{array}\]
+    \end{enumerate}
+\end{definition}
+
+\begin{proposition}
+    Los productos tensoriales definidos anteriormente son formas bilineales.
+\end{proposition}
+\begin{proof} 
+Usando $\forall v_1,v_2,u_1,u_2,v,w,u\in V$, $\forall f^1,f^2,g,p,q\in V^*$ y $\forall \lambda\in\mathbb{K}$,
+    \begin{enumerate}[label=(\roman*)]
+        \item \[\begin{array}{cccl}
+            \ptensor{f^1}{f^2}: & V\times V & \to & \mathbb{K}\\
+            & (v,w) & \mapsto & f^1(v)f^2(w)
+        \end{array}\]
+        siendo $f^1,f^2\in V^*$. Veamos que es forma bilineal,
+        \[\begin{array}{lrl} \text{\textbullet)} &(\ptensor{f^1}{f^2})(u_1+u_2,v)=&f^1(u_1+u_2)f^2(v)=\brackets{f^1(u_1)+f^1(u_2)}f^2(v)\\ &=&f^1(u_1)f^2(v)+f^1(u_2)f^2(v)=(\ptensor{f^1}{f^2})(u_1,v)+(\ptensor{f^1}{f^2})(u_2,v),\checkmark\\  \text{\textbullet)} &(\ptensor{f^1}{f^2})(v,u_1+u_2)  =&f^1(v)f^2(u_1+u_2)=f^1(v)\brackets{f^2(u_1)+f^2(u_2)}\\ &=&f^1(v)f^2(u_1)+f^1(v)f^2(u_2)=(\ptensor{f^1}{f^2})(v,u_1)+(\ptensor{f^1}{f^2})(v,u_2)\checkmark\\
+             \text{\textbullet)} & (\ptensor{f^1}{f^2})(\lambda v,u) =& f^1(\lambda v)f^2(u)=\lambda f^1(v)f^2(u)=\lambda(\ptensor{f^1}{f^2})(v,u)\checkmark\\
+        \text{\textbullet)}&(\ptensor{f^1}{f^2})(u,\lambda v)=&f^1(u)f^2(\lambda v)=\lambda f^1(u)f^2(v)=\lambda(\ptensor{f^1}{f^2})(u,v)\checkmark
+          \end{array}\]
+        Luego, $\ptensor{f^1}{f^2}$ es una forma bilineal. $\qedh $
+        \item \[\begin{array}{cccl}
+            \ptensor{v_1}{v_2}: & V^*\times V^* & \to & \mathbb{K}\\
+             & (f,g) & \mapsto & f(v_1)g(v_2)
+        \end{array}\]
+         \[\begin{array}{lrl}
+         \text{\textbullet)}&(\ptensor{v_1}{v_2})(f^1+f^2,g)=&(f^1+f^2)(v_1)g(v_2)=\brackets{f^1(v_1)+f^2(v_1)}g(v_2)\\
+         &=&f^1(v_1)g(v_2)+f^2(v_1)g(v_2)=(\ptensor{v_1}{v_2})(f^1,g)+(\ptensor{v_1}{v_2})(f^2,g)\checkmark\\
+         \text{\textbullet)}&(\ptensor{v_1}{v_2})(g,f^1+f^2)=&g(v_1)(f^1+f^2)(v_2)g=g(v_1)\brackets{f^1(v_2)+f^2(v_2)}\\
+         &=&g(v_1)f^1(v_2)+g(v_1)f^2(v_2)=(\ptensor{v_1}{v_2})(g,f^1)+(\ptensor{v_1}{v_2})(g,f^2)\checkmark\\
+         \text{\textbullet)}&(\ptensor{v_1}{v_2})(\lambda f,g)=&(\lambda f)(v_1)g(v_2)=\lambda f(v_1)g(v_2)=\lambda(\ptensor{v_1}{v_2})(f,g)\checkmark\\
+         \text{\textbullet)}&(\ptensor{v_1}{v_2})(g,\lambda f)=&g(v_1)(\lambda f)(v_2)=\lambda g(v_1)f(v_2)=\lambda(\ptensor{v_1}{v_2})(g,f)\checkmark
+         \end{array}\]
+        Luego, $\ptensor{v_1}{v_2}$ es una forma bilineal. $\qedh $
+        \item \[\begin{array}{cccl}
+            \ptensor{v_1}{f^1}: & V^*\times V & \to & \mathbb{K}\\
+             & (g,w) & \mapsto & g(v_1)f(w)
+        \end{array}\]
+        \[\begin{array}{lrl}
+        \text{\textbullet)}&(\ptensor{v_1}{f^1})(p+q,w)=&(p+q)(v_1)f^1(w)=\brackets{p(v_1)+q(v_1)}f^1(w)=\\
+        &=&p(v_1)f^1(w)+q(v_1)f^1(w)=(\ptensor{v_1}{f^1})(p,w)+(\ptensor{v_1}{f^1})(q,w)\checkmark\\
+        \text{\textbullet)}&(\ptensor{v_1}{f^1})(g,u+w)=&g(v_1)f^1(u+w)=g(v_1)\brackets{f^1(u)+f^1(w)}=\\
+        &=&g(v_1)f^1(u)+g(v_1)f^1(w)=(\ptensor{v_1}{f^1})(g,u)+(\ptensor{v_1}{f^1})(g,w)\checkmark\\
+        \text{\textbullet)}&(\ptensor{v_1}{f^1})(\lambda g,w)=&(\lambda g)(v_1)f^1(w)=\lambda g(v_1)f^1(w)=\lambda(\ptensor{v_1}{f^1})(g,w)\checkmark\\
+        \text{\textbullet)}&(\ptensor{v_1}{f^1})(g,\lambda w)=&g(v_1)f^1(\lambda w)=\lambda g(v_1)f^1(w)=\lambda(\ptensor{v_1}{f^1})(g,w)\checkmark
+        \end{array}\]
+            Luego, $\ptensor{v_1}{f^1}$ es una forma bilineal. \qedhere
+    \end{enumerate}
+\end{proof}
+\noindent El producto tensorial no se da solo entre elementos de los espacios vectoriales o duales, sino que también se puede dar entre espacios, siendo el nuevo espacio generado un \textbf{espacio vectorial}.
+\begin{proposition}
+    El espacio $\ptensor{V}{V}$ tiene estructura de espacio vectorial.
+\end{proposition}
+\begin{proof}
+    \begin{enumerate}
+        \item Vemos que $(\ptensor{V}{V},+)$ es grupo abeliano:
+        \begin{enumerate}[label=(\roman*)]
+            \item Vemos si la operación $+$ es cerrada:
+            \\
+            $\forall v,w,z\in V$ con $\ptensor{v}{w},\ptensor{v}{z},\ptensor{w}{z}\in\ptensor{V}{V}$, tenemos que ver si $\ptensor{(v+w)}{z}\in\ptensor{V}{V}$. Sabemos que,
+            \[\begin{array}{cccl}
+                \ptensor{v}{w}: & \pcart{V^*}{V^*} & \to &\mathbb{R}  \\
+                 & (f,g) & \mapsto & f(v)g(w)
+            \end{array}\]
+            luego,
+            \[\begin{array}{cccl}
+                \ptensor{(v+w)}{z}: & \pcart{V^*}{V^*} & \to &\mathbb{R}  \\
+                 & (f,p) & \mapsto & f(v+w)p(z)
+            \end{array}\]
+            Entonces,
+            \[(\ptensor{(v+w)}{z})(g,p)=f(v+w)p(z)=\brackets{f(v)+f(w)}p(z)=\]\[=f(v)p(z)+f(w)p(z)=(\ptensor{v}{z})(f,p)+(\ptensor{w}{z})(f,p)\]
+            Luego, $\ptensor{(v+w)}{z}\in\ptensor{V}{V}$ y así, la operación $+$ es cerrada. $\checkmark$
+            \item Asociatividad:
+            \\
+            Sean $\ptensor{a}{b},\ptensor{c}{d},\ptensor{e}{f}\in\ptensor{V}{V}$, tenemos que ver si $\ptensor{a}{b}+\brackets{\ptensor{c}{d}+\ptensor{e}{f}}=\brackets{\ptensor{a}{b}+\ptensor{c}{d}}+\ptensor{e}{f}$, tal que
+            \[(\ptensor{a}{b}+\brackets{\ptensor{c}{d}+\ptensor{e}{f}})(p,q)=p(a)q(b)+\brackets{p(c)q(d)+p(e)q(f)}=p(a)q(b)+p(c+e)q(d+f)=\]
+            \[=p(a+c+e)q(b+d+f)=p(a+c)q(b+d)+p(e)q(f)=\brackets{p(a)q(b)+p(c)q(d)}+p(e)q(f)=\]\[=(\brackets{\ptensor{a}{b}+\ptensor{c}{d}}+\ptensor{e}{f})(p,q)\checkmark\]
+            \item Elemento neutro:\\
+            Sea $\ptensor{e_1}{e_2}\in\ptensor{V}{V}$ el elemento neutro de $\ptensor{V}{V}$, tal que
+            \[\ptensor{e_1}{e_2}+\ptensor{v}{w}=\ptensor{v}{w}+\ptensor{e_1}{e_2}=\ptensor{v}{w}\]
+            Vemos el valor de este elemento neutro,
+            \[(\ptensor{e_1}{e_2}+\ptensor{v}{w})(f,g)=(\ptensor{v}{w})(f,g)\]
+            \[f(e_1)g(e_2)+f(v)+g(w)=f(v)g(w)\]
+            \[f(e_1+v)g(e_w+w)=f(v)g(w)\Leftrightarrow\left\lbrace\begin{matrix}
+                e_1=0\\
+                e_2=0
+            \end{matrix}\right.\]
+            luego, $\ptensor{e_1}{e_2}=0$. $\checkmark$
+            \item Elemento simétrico:
+            \\
+            $\forall\ptensor{v}{u}\in\ptensor{V}{V}$, $\exists\ptensor{\Tilde{v}}{\Tilde{u}}\in\ptensor{V}{V}$, tal que
+            \[\ptensor{v}{u}+\ptensor{\Tilde{v}}{\Tilde{u}}=\ptensor{\Tilde{v}}{\Tilde{u}}+\ptensor{v}{u}=\ptensor{e_1}{e_2}=0\]
+         Veamos quién es $\ptensor{\Tilde{v}}{\Tilde{u}}$,
+        \[(\ptensor{v}{u}+\ptensor{\Tilde{v}}{\Tilde{u}})(f,g)=f(v)g(u)+f(\Tilde{v})g(\Tilde{u})=(\ptensor{0}{0})(f,g)=f(0)g(0)\]
+        luego,
+        \[v+\Tilde{v}=0\Rightarrow\Tilde{v}=-v\]
+        \[u+\Tilde{u}=0\Rightarrow\Tilde{u}=-u\]
+        Por tanto, el elemento simétrico de $\ptensor{v}{u}$ es $\ptensor{(-v)}{(-u)}$. $\checkmark$
+        \item Conmutabilidad:\\
+        Sean $\ptensor{v}{w},\ptensor{u}{z}\in\ptensor{V}{V}$, entonces
+        \[(\ptensor{v}{w}+\ptensor{u}{z})(f,g)=f(v)g(w)+f(u)g(z)=f(v+u)g(w+z)=\]\[=f(u+v)g(z+w)=f(u)g(z)+f(v)g(w)=(\ptensor{u}{z}+\ptensor{v}{w})(f,g)\checkmark\]
+    Luego, es grupo abeliano. $\checkmark$
+         \end{enumerate}
+         \item Doble propiedad distributiva:
+         \begin{enumerate}
+             \item $\forall\lambda,\mu\in\mathbb{R}$, $\forall\ptensor{v}{w}\in\ptensor{V}{V}$,
+             \[(\lambda+\mu)\cdot(\ptensor{v}{w})(f,g)=(\lambda+\mu)f(v)g(w)=\]\[=\lambda f(v)g(w)+\mu f(v)g(w)=\lambda(\ptensor{v}{w})(f,g)+\mu(\ptensor{v}{w})(f,g)\checkmark\]
+             \item $\forall\lambda\in\mathbb{R}$, $\forall\ptensor{v}{w},\ptensor{u}{z}\in\ptensor{V}{V}$, tenemos que
+             \[\lambda(\ptensor{v}{w})(f,g)+\lambda(\ptensor{u}{z})(f,g)=\lambda f(v)g(w)+\lambda f(u)g(z)=\]\[=\lambda\brackets{f(v)g(w)+f(u)g(z)}=\lambda(\ptensor{v}{w}+\ptensor{u}{z})(f,g)\checkmark\]
+             \end{enumerate}
+             \item Propiedad pseudo-asociativa:\\
+             $\forall\lambda,\mu\in\mathbb{R}$; $\forall\ptensor{v}{w}\in\ptensor{V}{V}$, tenemos que
+             \[\lambda\cdot\brackets{\mu\cdot(\ptensor{v}{w})(f,g)}=\lambda\brackets{\mu f(v)g(w)}=\lambda f(\mu v)g(\mu w)=\]\[=f(\lambda\mu v)g(\lambda\mu w)=f(\mu\lambda v)g(\mu\lambda w)=\mu\brackets{f(\lambda v)g(\lambda w)}=(\mu\cdot\lambda)f(v)g(w)=(\mu\cdot\lambda)(\ptensor{v}{w})(f,g)\checkmark\]
+             \item Elemento unitario del cuerpo: $\forall\ptensor{v}{w}\in\ptensor{V}{V}$; $\Tilde{\mu}\in\mathbb{R}$, entonces $\Tilde{\mu}\cdot\ptensor{v}{w}=\ptensor{v}{w}\cdot\Tilde{\mu}=\ptensor{v}{w}$
+             \[(\Tilde{\mu}\cdot\ptensor{v}{w})(f,g)=f(\Tilde{\mu}v)g(\Tilde{\mu}w)=(\ptensor{v}{w})(f,g)=f(v)g(w)\Rightarrow\begin{matrix}
+                 \Tilde{\mu}\cdot v=v\\
+                 \Tilde{\mu}\cdot w=w
+             \end{matrix}\Leftrightarrow\Tilde{\mu}=1\checkmark\]
+       \end{enumerate}
+       Luego, $(\ptensor{V}{V}, +, \cdot)$ es un $\mathbb{R}$-espacio vectorial.
+\end{proof}
+\noindent Al igual que cualquier otro espacio vectorial, el espacio $V\otimes V$ deberá tener una \textbf{base}.
+\begin{proposition}
+    Si tenemos un $V$ espacio vectorial sobre $\mathbb{K}$ con base $B=\curlybraces{v_1,\dots,v_n}$, entonces todo $\ptensor{v}{w}$ será combinación lineal de los elementos de la base de $\ptensor{V}{V}$ dada por $\ptensor{B}{B}=\curlybraces{\ptensor{v_i}{v_j}}_{i,j=1}^{n}$
+\end{proposition}
+\begin{proof}
+    Queremos ver que $\curlybraces{\ptensor{v_i}{}v_j}_{i,j=1}^n$ es base de $\ptensor{V}{V}$. Para ello, tendremos que ver que esta base $\ptensor{B}{B}$ complete el espacio $\ptensor{V}{V}$ y que los vectores de la misma sean linealmente independientes.\\
+    Sabemos que $\ptensor{v}{w}\in\ptensor{V}{V}$ y que
+    \[\begin{array}{cccl}
+        \ptensor{v}{w}: & \pcart{V^*}{V^*} & \to & \mathbb{R}\\
+         & (f,g) & \mapsto & f(v)g(w)
+    \end{array}\]
+    Luego, para que la base $\ptensor{B}{B}$ complete el espacio $\ptensor{V}{V}$, se deberá poder expresar cualquier vector $\ptensor{v}{w}\in\ptensor{V}{V}$ como combinación lineal de los vectores de $\ptensor{B}{B}$. Podemos usar $B=\curlybraces{v_i}_{i=1}^n$ base de $V$, tal que
+    \[v=\sum\limits_{i=1}^n\lambda^iv_i=\lambda^iv_i,\hspace{4mm}w=\sum\limits_{j=1}^n\mu^jv_j=\mu^jv_j\]
+    Por tanto, usando $f,g\in V^*$, tenemos que
+    \[\ptensor{v}{w}(f,g)=f(v)g(w)=f(\lambda^iv_i)g(\mu^jv_j)=\lambda^if(v_i)\mu^jg(v_j)=\lambda^i\mu^jf(v_i)g(v_j)=\lambda^i\mu^j(\ptensor{v_i}{v_j})(f,g)\]
+    Luego, hemos expresado un vector del espacio $\ptensor{V}{V}$ como combinación lineal de los vectores de la base $\ptensor{B}{B}$. $\checkmark$\\ \\
+    Veamos que son linealmente independientes, para ello, se debe cumplir que,
+    \[\sum\limits_{i,j=1}^n\lambda^{ij}(\ptensor{v_i}{v_j})=\lambda^{ij}(\ptensor{v_i}{v_j})=0\Leftrightarrow\lambda^{ij}=0\]
+    Sabiendo que la base de $V^*$ es $B^*=\curlybraces{f^1,f^2,\dots,f^n}$, tal que
+    \[f^i(v_i)=1\hspace{5mm}f^j(v_i)\overset{i\neq j}{=}0\Rightarrow f^i(v_j)=\delta_{ij}\]
+    Podemos evaluar lo anterior en dos elementos arbitrarios de $B^*$, tal que
+    \[0=\lambda^{ij}(\ptensor{v_i}{v_j})(f^n,f^m)= \lambda^{ij}f^n(v_i)f^m(v_j)=\lambda_{ij}\delta_{n}^i\delta_{m}^j=\lambda^{nm}\]
+    luego, $\lambda^{nm}=0$ y por tanto, los vectores son linealmente independientes. $\checkmark$\\ \\
+    Así, hemos demostrado que $\ptensor{B}{B}$ es base de $\ptensor{V}{V}$.
+\end{proof}
+
+\begin{note}
+    Denotaremos $\ptensor{v}{w}\equiv h$, tal que
+    \[
+    \begin{array}{cccl}
+        h: & \pcart{V^*}{V^*} & \to & \mathbb{R} \\
+         & (f^i,f^j) & \mapsto & h(f^i,f^j)=h^{ij}
+    \end{array}
+    \]
+    siendo $f^i,f^j\in B^*$. Por tanto, para dos $p,q\in V^*$ cualesquiera, escribiremos
+    \[(\ptensor{v}{w})(p,q)=h(p,q)=h\left(\sum_{i=1}^np_if^i,\sum_{j=1}^nq_jf^j\right)=p_iq_j(f^i,f^j)=h^{ij}p_iq_j\]
+\end{note}
+\noindent Veamos algunas \textbf{propiedades} del producto tensorial.
+\begin{proposition}
+    Sea $V$ un $\mathbb{R}$-espacio vectorial,
+    \begin{enumerate}[label=(\roman*)]
+        \item $\ptensor{(v_1+v_2)}{w}=\ptensor{v_1}{w}+\ptensor{v_2}{w}$; $\forall v_1,v_2,w\in V$.
+        \item $\ptensor{w}{(v_1+v_2)}=\ptensor{w}{v_1}+\ptensor{w}{v_2}$, $\forall v_1,v_2,w\in V$.
+        \item $\ptensor{(\lambda v)}{w}=\lambda\ptensor{v}{w}$, $\forall v,w\in V$, $\forall\lambda\in\mathbb{R}$.
+        \item $\ptensor{w}{(\lambda v)}=\lambda\ptensor{w}{v}$, $\forall v,w\in V$, $\forall \lambda\in\mathbb{R}$.
+        \item $\ptensor{v}{w}\neq\ptensor{w}{v}$.
+        \item $\ptensor{v}{w}\neq0$ si $v\neq0$ ó $w\neq 0$.
+        \item Sea $\ptensor{a}{b}\neq0$, $\ptensor{a}{b}=\ptensor{a'}{b'}\Leftrightarrow a'=\lambda a$ y $b'=\lambda^{-1}b$.
+        \item $\ptensor{V}{W}$ es isomorfo con $\ptensor{W}{V}$.
+    \end{enumerate}
+\end{proposition}
+\begin{proof}
+    \begin{enumerate}[label=(\roman*)]
+        \item $\forall v_1,v_2,w\in V$,
+        \[(\ptensor{(v_1+v_2)}{w})(f,g)=f(v_1+v_2)g(w)=\brackets{f(v_1+f(v_2)}g(w)=\]\[=f(v_1)g(w)+f(v_2)g(w)=(\ptensor{v_1}{w})(f,g)+(\ptensor{v_2}{w})(f,g)\qedh\]
+        \item $\forall v_1,v_2,w\in V$,
+        \[(\ptensor{w}{(v_1+v_2)})(f,g)=f(w)g(v_1+v_2)=f(w)\brackets{g(v_1)+g(v_2)}=\]\[=f(w)g(v_1)+f(w)g(v_2)=(\ptensor{w}{v_1})(f,g)+(\ptensor{w}{v_2})(f,g)\qedh\]
+        \item $\forall v,w\in V$ y $\forall\lambda\in\mathbb{R}$,
+        \[(\ptensor{(\lambda\cdot v)}{w})(f,g)=f(\lambda\cdot v)g(w)=\lambda\cdot f(v)g(w)=\lambda\cdot(\ptensor{v}{w})(f,g)\qedh\]
+        \item $\forall v,w\in V$ y $\forall\mu\in\mathbb{R}$,
+        \[(\ptensor{w}{(\lambda\cdot v)})(f,g)=f(w)g(\lambda\cdot v)=\lambda\cdot f(w)g(v)=\lambda\cdot(\ptensor{w}{v})(f,g)\qedh\]
+        \item Vemos que, $(\ptensor{v}{w})(f,g)=f(v)g(w)$ y que $(\ptensor{w}{v})(f,g)=f(w)g(v)$, luego estos elementos serían iguales solo si $f\equiv g$. $\qedh$
+        \item Sean $v,w\in V$ y $f,g\in V^*$, tales que $f\not\equiv0$ y $g\not\equiv0$, entonces
+        \[(\ptensor{v}{w})(f,g)=f(v)g(w)=0\Leftrightarrow\begin{matrix}
+            f(v)=0 & \Leftrightarrow v=0\\
+            \text{ó} & \\
+            g(w)=0 & \Leftrightarrow w=0
+        \end{matrix}\qedh\]
+        \item \begin{tabular}{c|}
+             $\Rightarrow$ \\ \hline
+        \end{tabular} 
+        Sea $\ptensor{a}{b}=\ptensor{a'}{b'}$ entonces
+        \[(\ptensor{a}{b})(f,g)=f(a)g(b)=(\ptensor{a'}{b'})(f,g)=f(a')g(b')\]
+        luego,
+        \[f(a)g(b)=f(a')g(b')\]
+        pero como $a\neq a'$ y $b\neq b'$, debe haber una relación entre ambos, de tal forma que se cumpla la igualdad anterior. Supondremos que $a$ y $a'$ tienen una relación lineal (la más sencilla), tal que $a'=\lambda a+c$, luego 
+        \[f(a)g(b)=f(a')g(b')=f(\lambda a+c)g(b')=f(\lambda a)g(b')+f(c)g(b')=\lambda f(a)g(b')+f(c)g(b')\]
+        Agrupamos términos de la igualdad, tal que,
+        \[0:\hspace{5mm}0=f(c)g(b')\]
+        \[f(a):\hspace{5mm}g(b)=\lambda g(b')\]
+        Por la propiedad \textit{(vi)}, como $b'\neq0$, entonces $c=0$. Además,
+        \[g(b)=\lambda g(b')\Rightarrow g(b')=\lambda^{-1}g(b)\Rightarrow g(b')=g(\lambda^{-1}b)\Rightarrow b'=\lambda^{-1}b\]
+        Luego,
+        \[\begin{matrix}
+            a'=\lambda a\\
+            b'=\lambda^{-1}b
+        \end{matrix}\hspace{4mm}\checkmark\]
+        \begin{tabular}{c|}
+             $\Leftarrow$ \\ \hline
+        \end{tabular} 
+        Sea $a'=\lambda a$ y $b'=\lambda^{-1}b$, entonces
+        \[(\ptensor{a'}{b'})(f,g)=f(a')g(b')=f(\lambda a)g(\lambda^{-1}b)=\cancel{\lambda}\cancel{\lambda^{-1}}f(a)g(b)=(\ptensor{a}{b})(f,g)\checkmark\]
+        \item Sean $V,W$ espacios vectoriales, tales que
+        \[\begin{array}{ccl}
+            \ptensor{V}{W} & \to & \ptensor{W}{V}  \\
+            \ptensor{v}{w} & \mapsto & \ptensor{w}{v}
+        \end{array}\]
+        Si suponemos que $dimV=n$ y $dimW=m$, sabemos por tanto que $dim(V\otimes W)=n\cdot m$ y $dim(W\otimes V)=m\cdot n$, luego tienen la misma dimensión y por tanto, son isomorfos. $\checkmark$\\ \\
+        También podemos hacerlo sin usar la proposición de que $dim(\ptensor{V}{W})=n\cdot m$. Es claro ver que la aplicación es inyectiva, pues no hay dos elementos con la misma imagen, ya que la imagen se forma al permutar los elementos. Luego, al ser inyectivo, tenemos que $dimKer=0$. Por el Primer Teorema de Isomorfía,
+        \[dim(\ptensor{V}{W})=\cancelto{0}{dimKer}+dimIm=dimIm=dim(\ptensor{W}{V})\]
+        Luego, como $\ptensor{V}{W}$ y $\ptensor{W}{V}$ tienen la misma dimensión, entonces son isomorfos.
+    \end{enumerate}
+\end{proof}
+
+%Este es un ejemplo de un tensor con un superíndice y un subíndice:
+%\[ \tensor{T}{^i_j} \]
+
+%Este es un ejemplo de un tensor con múltiples superíndices y subíndices:
+%\[ \tensor{T}{^{ijk}_{lm\,n}} \]
+
+%Y este es un ejemplo de índices diagonales:
+%\[ \tensor*{T}{^{i\,j}_{k\,l}} \]
+ \subsection{El espacio de tensores (r,s): Definición, propiedades y ejemplos}
+ 
+ Una vez visto el producto tensorial de dos elementos, vamos a ver una generalización.
+\begin{definition}
+    Sea $V$ un espacio vectorial y $V^*$ un espacio dual, definimos 
+    \[\Omega^{r,s}(V)=\curlybraces{f\text{ aplicación multilineal};\hspace{2mm}f:V^*\times\overset{r}{\dots}\times V^*\times V\times\overset{s}{\dots}\times V}\]
+    es decir,
+    \[\Omega^{r,s}(V)\equiv V\otimes\overset{r}{\dots}\otimes V\otimes V^*\otimes\overset{s}{\dots}\otimes V^*\]
+\end{definition}
+\begin{note}
+    Sea $V$ un espacio vectorial. Las formas multilineales cuyas variables están en $V^*$ o $V$, se denominan \textbf{tensores sobre  }$\mathbf{V}$ y los espacios vectoriales que forman, se denominan \textbf{espacios tensoriales sobre} $\mathbf{V}$.\\ \\
+    El número de variables de $V^*$ y $V$ se denominan los \textbf{grados} de un tensor; al número de variables de $V^*$ se les denomina \textbf{grados contravariantes} y al número de variables de $V$, \textbf{grados covariantes}. Así, una forma multilineal del tipo $V^*\times V\times V$ es un tensor de tipo $(1,2)$, denotado como $\ptensor{V}{V^*}\otimes V^*=T_2^1$.
+\end{note}
+\begin{note}
+    Un tensor de tipo $(0,0)$ se define como un escalar, tal que $T_0^0=\lambda$. \\
+    Un tensor de tipo $(1,0)$ se denomina \textbf{vector contravariante o vector} y a uno del tipo $(0,1)$, \textbf{vector covariante o covector}.\\
+    Un tensor de tipo $(r,0)$ se denomina \textbf{tensor contravariante} y uno del tipo $(0,s)$, se denomina \textbf{tensor covariante}.
+\end{note}
+\noindent Al igual que $V\otimes V$ es un espacio vectorial, el conjunto $\Omega^{r,s}(V)$ también debe serlo.
+\begin{proposition}
+    $\Omega^{r,s}(V)$ es espacio vectorial.
+\end{proposition}
+\begin{proof}
+    Tenemos que ver que $(\Omega^{r,s}(V),+,\cdot)$ es un $\mathbb{R}$-espacio vectorial, siendo $+$ una operación interna y $\cdot$ una operación externa, tal que
+    \[\begin{matrix}
+        +: & \Omega^{r,s}(V)\times\Omega^{r,s}(V) & \to & \Omega^{r,s}(V)
+    \end{matrix}\hspace{5mm}y\hspace{5mm}\begin{matrix}
+        \cdot: & \Omega^{r,s}(V)\times\mathbb{R} & \to & \Omega^{r,s}(V)
+    \end{matrix}\]
+    Veamos si verifica las condiciones de espacio vectorial:
+    \begin{enumerate}
+        \item ¿$(\Omega^{r,s}(V),+)$ es un grupo abeliano?
+        \begin{enumerate}[label=(\roman*)]
+            \item ¿$+$ es una operación cerrada?\\
+            Sabiendo que $f,g\in\Omega^{r,s}(V)$ son aplicaciones multilineales, entonces $h=f+g$ será otra aplicación multilineal, lo vemos,
+            \[h(v_1^*,\dots,\alpha v_i^*+\lambda w_i^*,\dots,v_s^*)=(f+g)(v_1^*,\dots,\alpha v_i^*+\lambda w_i^*,\dots, v_s^*)=\]\[=f(v_1^*,\dots,\alpha v_i^*+\lambda w_i^*,\dots, v_s^*)+g(v_1^*,\dots,\alpha v_i^*+\lambda w_i^*,\dots, v_s^*)=\]\[=\alpha f(v_1^*,\dots,v_i^*,\dots,v_s^*)+\lambda f(v_1^*,\dots,w_i^*,\dots,v_s^*)+\alpha g(v_1^*,\dots,v_i^*,\dots,v_s^*)+\lambda g(v_1^*,\dots,w_i^*,\dots,v_s^*)=\]\[=\alpha\brackets{f(v_1^*,\dots,v_i^*,\dots,v_s^*)+g(v_1^*,\dots,v_i^*,v_s^*)}+\lambda\brackets{f(v_1^*,\dots,w_i^*,\dots,v_s^*)+g(v_1^*,\dots,w_i^*,\dots,v_s^*)}=\]\[=\alpha(f+g)(v_1^*,\dots,v_i^*,\dots,v_s^*)+\lambda(f+g)(v_1^*,\dots,w_i^*,\dots,v_s^*)=\]\[=\alpha h(v_1^*,\dots,v_i^*,\dots,v_s^*)+\lambda h(v_1^*,\dots,w_i^*,\dots,v_s^*)\checkmark\]
+            Luego, $h\in\Omega^{r,s}(V)$, y por tanto, la operación es cerrada. $\checkmark$
+            \item ¿Asociatividad?\\
+            $\forall f,g,h\in\Omega^{r,s}(V)$
+            \[(f+(g+h))(v)=f(v)+(g+h)(v)=f(v)+(g(v)+h(v))=((f)(v)+g(v))+h(v)=\]\[=(f+g)(v)+h(v)=((f+g)+h)(v)\checkmark\]
+            \item ¿Elemento neutro?\\
+            $\forall f\in\Omega^{r,s}(V)$, $\exists f^0\in\Omega^{r,s}(V)$ tal que $f^0+f=f+f^0=f$
+            \[(f+f^0)(v)=f(v)+f^0(v)=f(v)\Rightarrow f^0(v)=0\Rightarrow f^0\equiv0\checkmark\]
+            \item ¿Elemento simétrico?\\
+            $\forall f\in\Omega^{r,s}(V)$, $\exists\Tilde{f}\in\Omega^{r,s}(V)$ tal que $f+\Tilde{f}=\Tilde{f}+f=f^0$
+            \[(f+\Tilde{f})(v)=f(v)+\Tilde{f}(v)=f^0(v)=0\Rightarrow\Tilde{f}(v)=-f(v)\Rightarrow\Tilde{f}\equiv-f\checkmark\]
+            \item ¿Conmutabilidad?\\
+            $\forall f,g\in\Omega^{r,s}(V)$, 
+            \[(f+g)(v)=f(v)+g(v)=g(v)+f(v)=(g+f)(v)\checkmark\]
+            Luego, $(\Omega^{r,s}(V), +)$ es grupo abeliano.$\qedh$
+        \end{enumerate}
+        \item Doble propiedad distributiva:
+        \begin{enumerate}
+            \item $\forall\lambda,\mu\in\mathbb{R}$ y $\forall f\in\Omega^{r,s}(V)$,
+            \[(\lambda+\mu)f(v)=f((\lambda+\mu)v)=f(\lambda v)+f(\mu v)=\lambda f(v)+\mu f(v)\checkmark\]
+            \item $\forall\lambda\in\mathbb{R}$ y $\forall f,g\in \Omega^{r,s}(V)$,
+            \[\lambda(f+g)(v)=(f+g)(\lambda v)=f(\lambda v)+g(\lambda v)=\lambda f(v)+\lambda g(v)\checkmark\]
+        \end{enumerate}
+        \item Propiedad pseudo-asociativa:\\
+        $\forall\lambda,\mu\in\mathbb{R}$ y $\forall f\in\Omega^{r,s}(V)$,
+        \[\lambda(\mu f(v))=\lambda f(\mu v)=f((\lambda\mu) v)=(\lambda\mu)f(v)\checkmark\]
+        \item Elemento unitario de $\mathbb{R}$:\\
+        $\forall f\in\Omega^{r,s}(V)$, $\exists\Tilde{\lambda}\in\mathbb{R}$ tal que $\Tilde{\lambda}\cdot f=f\cdot\Tilde{\lambda}=f$,
+        \[\Tilde{\lambda}\cdot f(v)=f(\Tilde{\lambda}\cdot v)=f(v)\Rightarrow \Tilde{\lambda}v=v\Rightarrow\Tilde{\lambda}=1\checkmark\]
+    \end{enumerate}
+    Luego, $(\Omega^{r,s}(V), +, \cdot)$ es un $\mathbb{R}$-espacio vectorial. \qedhere
+\end{proof}
+\noindent Como $\Omega^{r,s}(V)$ es un espacio vectorial, deberá de tener una \textbf{base}.
+\begin{proposition}
+    Si tenemos un conjunto $V$ que sea un $\mathbb{R}$-espacio vectorial con base $B=\curlybraces{v_1,\dots,v_n}$ y $V^*$ el espacio dual de $V$ con base $B^*=\curlybraces{f^1,\dots,f^n}$, entonces todo $h\in\Omega^{r,s}$ será combinación lineal de $B^{r,s}=\curlybraces{v_{i_1}\otimes\dots\otimes v_{i_r}\otimes f^{j_1}\otimes\dots\otimes f^{j_s}}$ \\
+    tal que $h\equiv\left(h^{i_1,\dots,i_r}_{j_1,\dots,j_s}\right)^n_{i_1,\dots,i_r,j_1,\dots,j_s}$
+\end{proposition}
+\begin{proof}
+    Tenemos que ver que los elementos de la base son linealmente independientes y para ello, se debe cumplir que
+    \[\sum\limits_{\overset{i_1,\dots,i_r}{j_1,\dots,j_s}}^n\lambda_{j_1,\dots,j_s}^{i_1,\dots,i_r}v_{i_1}\otimes\dots\otimes v_{i_r}\otimes f^{j_1}\otimes\dots\otimes f^{j_s}=0\Leftrightarrow\lambda_{j_1,\dots,j_s}^{i_1,\dots,i_r}=0\]
+    Luego, dados $i_1^0,\dots,i_r^0,j_1^0,\dots,j_s^0$ índices fijos, y vamos a tomar
+    \[f\equiv\sum\limits_{\overset{i_1,\dots,i_r}{j_1,\dots,j_s}}^n\lambda_{j_1,\dots,j_s}^{i_1,\dots,i_r}(v_{i_1}\otimes\dots\otimes v_{i_r}\otimes f^{j_1}\otimes\dots\otimes f^{j_s})=\lambda_{j_1,\dots,j_s}^{i_1,\dots,i_r}(v_{i_1}\otimes\dots\otimes v_{i_r}\otimes f^{j_1}\otimes\dots\otimes f^{j_s})\]
+    luego,
+    \[0=f(f^{i_1^0},\dots,f^{i_r^0},v_{j_1^0},\dots,v_{j_s^0})=\lambda_{j_1,\dots,j_s}^{i_1,\dots,i_r}\left(f^{i_1^0}(v_{i_1})\dots f^{i_r^0}(v_{i_r})f^{j_1}(v_{j_1^0})\dots f^{j_s}(v_{j_s^0})\right)\]
+    sabemos que un elemento de la base de $V$ con un elemento de la base de $V^*$ cumple que
+    \[\left\lbrace\begin{matrix}
+        f^i(v_j)\overset{j\neq i}{=}0\\
+        f^i(v_i)=1
+    \end{matrix}\right.\]
+    luego, esto es una delta de Kronecker $\delta_{i,j}$, y entonces,
+    \[0=\lambda_{j_1,\dots,j_s}^{i_1,\dots,i_r}\delta_{i_1}^{i_1^0}\dots\delta_{i_r}^{i_r^0}\delta_{j_1^0}^{j_1}\dots\delta_{j_s^0}^{j_s}=\lambda_{j_1^0,\dots,j_s^0}^{i_1^0,\dots,i_r^0}\Rightarrow\lambda_{j_1^0,\dots,j_s^0}^{i_1^0,\dots,i_r^0}=0\]
+    y por tanto, los elementos son linealmente independientes. $\checkmark$\\ 
+    Ahora tenemos que comprobar que un elemento $h\in\Omega^{r,s}(V)$ se puede escribir como combinación lineal de los elementos de la base, es decir,
+     \[h(g^{i_1},\dots,g^{i_r},w_{j_1},\dots,w_{j_s})=h_{j_1,\dots,j_s}^{i_1,\dots,i_r}\left(v_{i_1}\otimes\dots\otimes v_{i_r}\otimes f^{j_1}\otimes\dots\otimes f^{j_s}\right)(g^{i_1},\dots,g^{i_r},w_{j_1},\dots,w_{j_s})\]
+     Vamos a verlo:
+     \begin{note}
+         Vamos a hacer primero una aclaración acerca de los índices. Cuando decimos que $i_1$ va desde $1$ hasta $n$, estamos diciendo que tenemos la sucesión $1_1,2_1,\dots,n_1$. Por tanto, aunque en los sumatorios pongamos $\sum\limits_{i_1=1}^n a_{i_1}$, lo correcto sería poner $\sum\limits_{i=1}^na_{i_1}$, pero esto puede llevar a confusión o a problemas cuando, por ejemplo, $i_1$ no tenga los mismos elementos que $i_7$. Luego, para referirnos a un elemento $i_k$-ésimo, escribiremos $a_{i_k}=\sum\limits_{i_k=1}^n\gamma_{i_k}b_{i_k}$.
+     \end{note}
+\noindent Luego, $\forall w_{j_1},\dots,w_{j_s}\in V$ y $\forall g^{i_1},\dots g^{i_r}\in V^*$, tal que
+     \[\begin{matrix}
+         w_{j_k}=\sum\limits_{j_k=1}^n\mu^{j_k}v_{j_k}=\mu^{j_k}v_{j_k}\\
+         g^{i_k}(v)=\sum\limits_{i_k=1}^n\mu_{i_k}f^{i_k}(v)=\mu_{i_k}f^{i_k}(v)
+     \end{matrix}\]
+     Luego, tomando un $h\in\Omega^{r,s}(V)$, tal que
+     \[\begin{matrix}
+         h(v_{j_p})=h_{j_p}; & h_{j_p}\in\mathbb{R} & p=1,2,\dots,s\\
+         h(f^{i_q})=h^{i_q}; & h^{i_q}\in\mathbb{R} & q=1,2,\dots,r
+     \end{matrix}\]  
+    Entonces,
+    \[h(g^{i_1},\dots,g^{i_r},w_{j_1},\dots,w_{j_s})=h(g^{i_1})\dots h(g^{i_r})h(w_{j_1})\dots h(w_{j_s})=\]\[=h\left(\sum\limits_{i_1=1}^n\mu^{i_1}f^{i_1}\right)\dots h\left(\sum\limits_{i_r=1}^n\mu^{i_r}f^{i_r}\right)h\left(\sum\limits_{j_1=1}^n\mu_{j_1}v_{j_1}\right)\dots h\left(\sum\limits_{j_s=1}^n\mu_{j_s}v_{j_s}\right)=\]\[=\mu^{i_1}h(f^{i_1})\dots \mu^{i_r}h(f^{i_r})\mu_{j_1}h(v_{j_1})\dots \mu_{j_s}h(v_{j_s})=\]\[=\curlybraces{\text{Podemos agrupar los escalares de tal forma que}}=\]\[=\mu_{j_1,\dots,j_s}^{i_1,\dots,i_r}h(f^{i_1})\dots h(f^{i_r})h(v_{j_1})\dots h(v_{j_s})=\]\[=\mu_{j_1,\dots,j_s}^{i_1,\dots,i_r}h^{i_1}\dots h^{i_r}h_{j_1}\dots h_{j_s}=\mu_{j_1,\dots,j_s}^{i_1,\dots,i_r}h_{j_1,\dots,j_s}^{i_1,\dots,i_r} \]
+    Usando que $\mu_{j_1,\dots,j_s}^{i_1,\dots,i_r}=(v_{i_1}\otimes\dots\otimes v_{i_r}\otimes f^{j_1}\otimes f^{j_s})(g^{i_1},\dots,g^{i_r},w_{j_1},\dots,w_{j_s})$, tenemos
+    \[h(g^{i_1},\dots,g^{i_r},w_{j_1},\dots,w_{j_s})=h_{j_1,\dots,j_s}^{i_1,\dots,i_r}(v_{i_1}\otimes\dots\otimes v_{i_r}\otimes f^{j_1}\otimes f^{j_s})(g^{i_1},\dots,g^{i_r},w_{j_1},\dots,w_{j_s})\]
+    Luego, $h\in\Omega^{r,s}(V)$ es combinación lineal de los elementos de la base. $\checkmark$\\
+    Por tanto, $B^{r,s}=\curlybraces{v_{i_1}\otimes\dots\otimes v_{i_r}\otimes f^{j_1}\otimes\dots\otimes f^{j_s}}$ es base de $\Omega^{r,s}(V)$. \qedhere
+\end{proof} 
+\begin{corollary}
+    Sea $V$ un espacio vectorial con $\rm{dim}(V)=n$. Entonces, $\rm{dim}~\Omega^{r,s}(V)=n^{r+s}$
+\end{corollary}
+\begin{proof}
+    Sabemos que
+    \[\Omega^{r,s}(V)\equiv V\otimes\overset{r}{\dots}\otimes V\otimes V^*\otimes\overset{s}{\dots}\otimes V^*\]
+Por tanto, al ser $\rm{dim}(V)=n$, al tener $V$ $r-$veces, tenemos que $\rm{dim}(V\otimes\overset{r}{\dots}\otimes V)=n^r$ y como $\rm{dim}(V)=\\rm{dim}(V^*)$, entonces tenemos que $\rm{dim}(V^*\otimes\overset{s}{\dots}\otimes V^*)=n^s$, por tanto, $\rm{dim}~\Omega^{r,s}(V)=n^{r}\cdot n^s=n^{r,s}$
+\end{proof}
+ \begin{note}
+  El producto escalar es un tensor de tipo $(0,2)$, es decir, $\scalar{\cdot}{\cdot}\in\Omega^{0,2}(V)$ tal que
+  \[\scalar{\cdot}{\cdot}=\sum g_{ij}\ptensor{f^i}{f^j}\equiv g_{ij}\ptensor{f^i}{f^j}\]
+ \end{note}
+\noindent Ahora vamos a ver el caso particular del producto escalar. El cuál es muy importante, pues nos permitirá escribir \textbf{tensores independientes de sus bases}.
+ \begin{note}
+     El producto escalar $\scalar{\cdot}{v}$ es un tensor de tipo $(0,1)$, es decir, $\scalar{\cdot}{v}\in\Omega^{0,1}(V)$ tal que
+     \[\scalar{\cdot}{v}=g_{ij}(\ptensor{f^i}{f^j})(\cdot, v)\]
+         \label{Nota1}
+ \end{note}
+
+ 
+ \begin{proposition}
+     Dado $\curlybraces{v_1,v_2,\dots,v_n}$ base de $V$, tenemos que $\scalar{\cdot}{v_1},\dots,\scalar{\cdot}{v_n}$ es base de $V^*$
+ \end{proposition}
+\begin{proof}
+    Tenemos que comprobar que los elementos de la base son linealmente independientes, es decir,
+    \[\lambda_1\scalar{\cdot}{v_1}+\lambda_2\scalar{\cdot}{v_2}+\dots+\lambda_n\scalar{\cdot}{v_n}=0\Leftrightarrow\lambda_1=\dots=\lambda_n=0\]
+    Evaluando un $v_k\in B$, tenemos
+    \[0=\lambda_1\scalar{v_k}{v_1}+\dots+\lambda_k\scalar{v_k}{v_k}+\dots+\lambda_n\scalar{v_k}{v_n}\]
+    Como los elementos de $B$ son linealmente independientes, por la condición de base dual, se debe cumplir que
+    \[\scalar{v_i}{v_j}=\delta_{ij}\]
+    Entonces,
+     \[0=\lambda_1\cancelto{0}{\scalar{v_k}{v_1}}+\dots+\lambda_k\cancelto{1}{\scalar{v_k}{v_k}}+\dots+\lambda_n\cancelto{0}{\scalar{v_k}{v_n}}=\lambda_k\]
+     Por tanto, $\lambda_k=0$, luego son linealmente independientes. Además, como esta base es una base dual de $V^*$, tendrá la misma dimensión que $V$, por la Proposición \ref{Prop1.6} y así, el conjunto generador pasa a ser base.
+\end{proof}
+\noindent Así, dado un espacio vectorial métrico no degenerado, $(V,g)$ de dimensión finita, se puede establecer un isomorfismo entre $V$ y su dual $V^*$, que \textbf{no depende de bases, sino solo de la métrica}, $g$. Esto permite identificar de forma natural los vectores de $V$ con las formas lineales sobre $V$.
+\begin{note}
+    Vamos a identificar el producto escalar como $\scalar{\cdot}{v}\equiv g(\cdot,v)$ para simplificar la notación. 
+\end{note}
+\noindent Ahora vamos a definir dos aplicaciones, \textbf{bemol} y \textbf{sostenido}, las cuáles nos permitirán 'bajar' o 'subir' índices, es decir, transformar el tipo del tensor.
+\begin{definition}
+    Definimos la aplicación \textbf{bemol} como,
+    \[\begin{array}{rlll}
+        \flat: & V  & \to & V^*\\
+         &  v & \mapsto & v^\flat
+    \end{array}\]
+    la cuál nos sirve para 'bajar índices'
+\end{definition}
+\begin{proposition}%\footnote{Jónatan: La aplicación ${\flat}$ hay que definirla como una aplicación lineal ${\flat}:V\rightarrow V^*$. Una vez definida, hay que probar que es biyectiva, y una vez sabemos que es biyectiva, podemos definir $\sharp$ como la inversa de $\flat$.}
+    Sea $(V,g)$ un espacio vectorial dotado de una métrica no degenerada.
+    \begin{enumerate}
+        \item Para cada $v\in V$ la aplicación \[\begin{array}{rll}
+             v^\flat\equiv g(v,\cdot):V &\to &\mathbb{R}  
+        \end{array}\]
+        \[v^\flat(\omega)=g(v,\omega)\hspace{5mm}\forall\omega\in V\]
+        es lineal, es decir, $v^\flat\in V^*$.
+        \item La aplicación \textbf{bemol} ('bajar índices'), dada por
+        \[\begin{array}{rll}
+             \flat:V&\to& V^*\\
+             v& \mapsto&v^\flat
+        \end{array}\]
+        es un isomorfismo de espacios vectoriales.
+    \end{enumerate}
+\end{proposition}
+\begin{proof}
+\begin{enumerate}
+    \item Veamos que es aplicación lineal,\\
+    $\forall v,w,u\in V$ y $\forall\lambda\in\mathbb{R}$,
+    \[\begin{array}{rrrl}
+        (i) & v^\flat(w+u)\equiv g(v,w+u) & = & g(v,w)+g(v,u)=v^\flat(w)+v^\flat(u)~\checkmark \\ \\
+        (ii) & v^\flat(\lambda w)\equiv g(v,\lambda w) & = & \lambda ~g(v,w)=\lambda~v^\flat(w)~\checkmark
+    \end{array}\]
+    \qedhere
+    \item Debemos probar que es una aplicación lineal y biyectiva.\\
+    Vemos que es lineal por 1. $\checkmark$\\
+    Comprobamos que es biyectiva, es decir, es inyectiva y sobreyectiva. Comprobamos que es inyectiva viendo que el $Ker\curlybraces{\flat}=\curlybraces{0}$,
+    \[ker\curlybraces{\flat}=\curlybraces{\Tilde{w}\in V;~v^\flat(\Tilde{w})=0}\]
+    usando que $v^\flat\equiv g(v,\cdot)$, tenemos que $0=v^flat(\tilde{w})\equiv g(v,\Tilde{w})$ y como $v$ es cualesquiera $v\in V$, al ser $g$ no degenerada, se cumple que $g(v,\Tilde{w})=0$ si y solo si $\Tilde{w}=0$ ó $v=0$, pero como $v$ es arbitrario, nos quedamos con $\Tilde{w}=0$ y por tanto, $ker\curlybraces{\flat}=\curlybraces{0}$, luego es inyectiva. $\checkmark$\\
+    Vemos que es sobreyectiva usando el Primer Teorema de Isomorfía, el cuál nos dice que
+    \[dim(V)=dim(ker\curlybraces{\flat})+dim(Im\curlybraces{\flat})\]
+    pero como $ker\curlybraces{\flat}=\curlybraces{0}$, entonces, $dim(ker\curlybraces{\flat})=0$ y además, vemos que $Im\curlybraces{\flat}=V^*$ y sabemos que $dim (V)=dim(V^*)$, luego
+    \[dim(V)=\cancelto{0}{dim(ker\curlybraces{\flat})}+dim(Im\curlybraces{\flat})=dim(V^*)\]
+    luego, al ser la imagen de la misma dimensión que el espacio de entrada, decimos que $\flat$ es sobreyectiva. $\checkmark$\\
+    Por tanto, la aplicación $\flat$ es un isomorfismo. $\qedh$
+\end{enumerate}
+\end{proof}
+\begin{definition}
+    Definimos la aplicación \textbf{sostenido} como la inversa de la aplicación bemol (pues la aplicación bemol es biyectiva y por tanto tiene inversa), dada por
+        \[\begin{array}{rll}
+             \sharp:V^*&\to& V  \\
+            v^\flat & \mapsto & v
+        \end{array}\]
+        la cuál nos permite subir índices.
+\end{definition}
+\noindent Una caracterización alternativa del sostenido es la siguiente.
+\begin{proposition}
+    Sea $(V,g)$ un espacio vectorial métrico no degenerado de dimensión finita y\\
+    $\phi\in V^*$. Entonces $\phi^\sharp$ es el único vector que verifica,
+    \[g(\phi^\sharp,v)=\phi(v),\hspace{6mm}\forall v\in V\]
+\end{proposition}
+\begin{proof}
+    Aplicando las definiciones,
+    \[g(\phi^\sharp,v)=(\phi^\sharp)^\flat(v)=\phi(v)\]
+    Además, si otro vector $u_\phi\in V$ verificara esa relación, se tendría
+    \[g(\phi^\sharp-u_\phi,v)=\phi(v)-\phi(v)=0,\hspace{5mm}\cfoot{ v\in V}\]
+    y, al ser no degenerada, $\phi^\sharp-u_\phi=0\Rightarrow u_\phi=\phi^\sharp$.
+\end{proof}
+\begin{note}
+    
+    Sea $w=w^iv_i\equiv w^i$ un vector de $V$ y sea $g(\cdot,w)$ una $1-$forma métrica asociada, tal que $g(\cdot,w)=w_j f^j\equiv w_j$. Se tiene entonces que
+    \[w_j=g_{ij}w^i\hspace{5mm}y\hspace{5mm}w^i=g^{ij}w^i\]
+    A esto lo denominamos \textbf{subida} y \textbf{bajada} de índices (métrica).
+    \\ \\
+    Además, usaremos la base de productos escalares, pues
+    \[V\longleftrightarrow V^*\]
+    \[v\to v^*\hspace{3mm}\text{depende de la base }B^*\]
+    \[v\to g(\cdot,v)\hspace{3mm}\text{no depende de la base }B^*\text{, sino de la métrica }g \]
+\end{note}
+
+\begin{note}
+    Los nombres 'subir y bajar' índices provienen de la Relatividad General. En Mecánica Cuántica, Dirac introdujo una nomenclatura distinta. Considerando un espacio vectorial euclídeo (y, con más generalidad, un espacio de Hilbert) con producto escalar $\scalar{\cdot}{\cdot}$; los vectores $v$ y $w$ se denotan como un 'ket', $v\equiv\ket{v}$, $w\equiv\ket{w}$ y sus bemoles como un 'bra', $v^\flat\equiv\bra{v}$, $w^\flat\equiv\bra{w}$, de modo que $v^\flat(w)$ es el 'braket' $\braket{v|w}$.
+\end{note}
+%https://wpd.ugr.es/~jperez/wordpress/wp-content/uploads/raiz_ALyGII.pdf
+
+\subsection{Contracciones de Tensores}
+%http://www.fisica.unlp.edu.ar/Members/rossigno/notas27-28.pdf
+   Una vez que hemos visto cómo subir y bajar índices, podemos definir una operación denominada \textbf{contracción} de tensores, la cuál encoge un tensor $(r,s)$ a uno $(r-1,s-1)$. La definición general se obtiene a partir del siguiente caso especial.
+
+\begin{lemma}
+    Hay una única aplicación lineal
+    $C:\Omega_1^1\to\mathbb{R}$
+    llamada \textit{contracción (1,1)}, tal que
+    \[\begin{array}{rlll}
+        C: & \Omega_1^1 (V)& \to & \mathbb{R} \\
+         & \ptensor{v}{f} & \mapsto & C(\ptensor{v}{f})=f(v)
+    \end{array}\]
+    para todo $v\in V$ y $f\in V^*$.
+\end{lemma}
+\begin{proof} (Esta demostración usa el concepto de matrices de cambio de base, por lo que se recomienda ver la sección \ref{CambioBasesTensores(1,1)})\\ 
+    Tomando $B=\curlybraces{v^1,v^2,\dots,v^n}$ base de $V$ y $B^*= \curlybraces{f_1,f_2,\dots,f_n}$ base de $V^*$, podemos escribir un tensor de tipo $(1,1)$ como
+    \[A\equiv\sum A^i_j\ptensor{f_i}{v^j}\]
+    Como $C(\ptensor{f_i}{v^j})=f_i(v^j)=\delta^j_i$, por la condición de base dual, no nos queda otra opción, más que definir,
+    \[C(A)=\sum A_i^i=\sum A(f_i,v^i)\]
+    Entonces, $C$ tiene las propiedades requeridas en las bases $B,B^*$. Luego, para obtener la función general requerida es suficiente con mostrar que esta definición es independiente de la elección del sistema de coordenadas. Así, tomando una nueva base de $V$, $B'=\curlybraces{w^1,w^2,\dots,w^n}$ y otra de $V^*$, $B^{*'}=\curlybraces{q_1,q_2,\dots,q_n}$, tenemos
+    \[\begin{array}{rrl}
+        C(A) & = & \sum\limits_mA(q_m,w^m)= \sum\limits_mA\left(\sum\limits_i a_i^mf_m,\sum_jb_m^jv^m\right)\\
+         & = & \sum\limits_{i,j,m}a_i^mb_m^jA(f_i,v^j)=\sum\limits_{i,j}\delta^j_iA(f_i,v^j)\\
+         & = & \sum\limits_iA(f_i,v^j)
+    \end{array}\]
+\end{proof}
+\noindent Para extender las contracciones $(1,1)$, $C$, a un tensor de un tipo mayor, el esquema es especificar una componente covariante y otra contravariante y aplicar $C$ a estos.\\
+
+\noindent Suponemos un tensor $A\in\Omega_r^s(V)$ y $1\leq r$ y $1\leq j \leq s$. Fijamos las formas $p_1,p_2,\dots,p_{r-1}$ y los vectores $u_1,u_2,\dots ,u_{s-1}$. Entonces la función
+\[
+(p,u) \to A(p_1, \dots, \underbrace{p_{i}}_{\mathclap{i\text{-ésima componente contravariante}}}, \dots, p_{r-1}, u^{1}, \dots, \overbrace{u^{j}}^{\mathclap{j\text{-ésima componente covariante}}}, \ldots, u^{s-1})
+\]
+es un tensor $(1,1)$ que puede escribirse como
+
+\[A(p_1,\dots,\cdot,\dots,p_{r-1},u^1,\dots,\cdot,\dots,u^{s-1})\]
+Aplicando la contracción $(1,1)$ a este tensor, produce una función de valor real denotada por
+
+\[\left(C_j^iA\right)\left(p_1,\dots,p_{r-1},u^1,\dots,u^{s-1}\right)\]
+Siendo $C_j^iA$ una función multilineal. Por tanto, esto es un tensor de tipo $(r-1,s-1)$ llamado \textit{la contracción de }$A$\textit{ sobre }$i,j$.
+
+%\begin{definition}
+ %   La contracción de un tensor $A$ de tipo $(r,s)$ con respecto al índice contravariante $p$ $(p\leq r)$ y al índice covariante $q$ $(q\leq s)$ es el tensor de tipo $(r-1,s-1)$, teniendo las componentes,
+  %  \[B^{i_1\dots i_{r-1}}_{j_1\dots j_{s-1}}=A^{i_1\dots i_{p-1}ki_p\dots i_{r-1}}_{j_1\dots j_{q-1}kj_q\dots j_{s-1}}\]
+%\end{definition}
+
+\begin{note}
+    Para poder contraer tensores, debemos tener superíndices y subíndices, así, podemos usar primero la métrica para subir o bajar índices y luego aplicar la contracción.
+   \end{note} 
+\begin{example}
+        Si tenemos un tensor de tipo (0,2),
+    $S\equiv S_{\alpha\beta}$, podemos hacer,
+    \[\begin{array}{rllll}
+        S_{\alpha\beta} & \to & g^{\gamma\alpha}S_{\alpha\beta}=S^{\alpha}_{\beta} & \to & C^1_1S^{\gamma}_{\beta}=S^{\beta}_{\beta} \\
+        \text{Tensor (0,2)} & \to & \text{Tensor (1,1)} & \to &\text{Escalar}
+    \end{array}\]
+    cosa que se puede simplificar simplemente usando,
+    \[S\equiv S_{\alpha\beta}\to g^{\beta\alpha}S_{\alpha\beta}=S^{\beta}_{\beta}\]
+    es decir, podemos contraer tensores con la propia métrica.
+\end{example}
+
+\begin{example}
+    Si
+    \[U^j_i=T^{kj}_{ik}\]
+    entonces
+    \[U'^{j'}_{i'}=T'^{k'j'}_{i'k'}=S^i_{i'}S^l_{k'}R^{k'}_kR^{j'}_jT^{kj}_{il}=S^i_{i'}\delta^l_kR^{j'}_jT^{kj}_{il}=S^i_{i'}R^{j'}_jT^{kj}_{ik}=S^i_{i'}R^{j'}_jU^j_i\]
+    donde hemos utilizado $S^l_{k'}R^{k'}_k=\delta^l_k$. Vemos que se transforma como un tensor (1,1).\\
+
+\noindent    Así, dado un tensor $T^{ij}_{kl}$ de tipo (2,2), serán posible las 4 contracciones
+    \[T^{kj}_{ki},\hspace{3mm}T^{jk}_{ik},\hspace{3mm}T^{kj}_{ik},\hspace{3mm}T^{jk}_{ki}\]
+    que originan 4 tensores de tipo (1,1). Por otro lado, las dos posibles contracciones dobles que dan lugar a un escalar (tensor de tipo (0,0)) son
+    \[T^{kj}_{kj},\hspace{3mm}T^{jk}_{kj}\]
+\end{example}
+\begin{note}
+    El producto escalar $(\mathbb{R}^n,g_{ij})$ también se puede contraer. Pues $g_{ij}$ es un tensor de tipo (0,2), al cual le podemos aplicar una contracción 1,1, pero primero lo pasamos a un tensor de tipo (1,1), variando sus índices, tal que
+    \[C^1_1\left(g^{ki}g_{ij}\right)=C^1_1(g^k_j)=g^j_j=n\]
+    donde sabemos que vale $n$, pues al ser un espacio de dimensión $n$, la matriz asociada a $g$ será \\$G\in\mathcal{M}_{n\times n}$ y por tanto, la traza será la suma de $n$-elementos. Sabemos que estos elementos son el 1, porque la traza es invariante frente a los cambios de base (cosa que veremos más adelante), por tanto, si cogemos el producto escalar usual en la base usual, la matriz asociada es la matriz de Gram, cuyos elementos son todos nulos, salvo la diagonal que está formada por 1.
+\end{note}
+
+\subsection{Leyes de transformación}
+
+Las leyes de transformación, también se conocen como \textit{cambios de bases} o \textit{cambios de variables}. Vamos a ver cómo son estos cambios de base en los tensores, pero primero veremos los casos particulares de \textbf{vectores}, \textbf{formas} y \textbf{tensores de tipo (1,1)}.
+
+\subsubsection*{Cambio de base de vectores }
+Queremos construir una matriz que nos permita cambiar las coordenadas de un vector en una base por las coordenadas del mismo vector en otra base, donde tomamos la función identidad. \\
+
+\noindent Sea un espacio vectorial $V$ con bases $B=\curlybraces{v_1,\dots,v_n}$ y $\tilde{B}=\curlybraces{\tilde{v}_1,\dots \tilde{v}_n}$. Consideramos un vector $w\in V$, que podemos escribir en ambas bases como,
+\[w=x^1v_1+\dots x^nv_n\]
+\[w=\tilde{x}^1\tilde{v}_1+\dots \tilde{x}_n\tilde{v}^n\]
+Como el vector es el mismo, podemos igualar ambas expresiones,
+\[x^1v_1+\dots x^nv_n=\tilde{x}^1\tilde{v}_1+\dots \tilde{x}^n\tilde{v}_n\]
+o bien,
+\[x^iv_i=\tilde{x}^{i}\tilde{v}_i\]
+Expresando los elementos de la base $B$ en función de los de la base $B'$ tenemos,
+
+\[\left\lbrace\begin{matrix}
+    v_1=a^{1}_1\tilde{v}_1+\dots a^{n}_1\tilde{v}_{n}\\
+    v_2=a^{1}_2\tilde{v}_1+\dots a^{n}_2\tilde{v}_{n}\\
+    \vdots \\
+    v_n=a^{1}_n\tilde{v}_1+\dots a^{n}_n\tilde{v}_{n}
+\end{matrix}\right.\]
+o bien,
+\[v_i=a_i^j\tilde{v}_j\]
+donde hemos agrupado las constantes en los diferentes $a^{j}_i$.\\
+Sustituyendo,
+
+\[\begin{array}{rrl}
+  x^1v_1+\dots x^nv_n  & = & x^1a^{1}_1\tilde{v}_1+\dots+x^1a^{n}_1\tilde{v}_n+\dots+x^na^{1}_n\tilde{v}_1+\dots+x^na^{n}_n\tilde{v}_n=\\
+     & = & (x^1a^{1}_1+\dots+x^na^{1}_n)\tilde{v}_1 +\dots (x^1a^{n}_1+\dots+x^na^{n}_n)\tilde{v}_n=\\
+     & = & \tilde{x}^1\tilde{v}_1+\dots \tilde{x}^n\tilde{v}_n
+\end{array}\]
+Luego, lo que acompaña a cada vector deberá ser igual, es decir,
+\[\left\lbrace\begin{matrix}
+    \tilde{x}^1=x^1a^{1}_1+\dots+x^na^{1}_n\\
+    \vdots \\
+    \tilde{x}^n=x^1a^{n}_1+\dots+x^na^{n}_n
+\end{matrix}\right.\]
+o escrito en forma matricial como,
+\[\begin{pmatrix}
+    \tilde{x}^1\\
+    \vdots \\
+    \tilde{x}^n
+\end{pmatrix}=\begin{pmatrix}
+    a^{1}_1 & \dots & a^{n}_1\\
+    \vdots & \ddots & \vdots \\
+    a^{1}_n & \dots & a^{n}_n
+\end{pmatrix}\begin{pmatrix}
+    x^1\\
+    \vdots \\
+    x^n
+\end{pmatrix}\]
+donde la matriz
+ \[a^{j}_i=\begin{pmatrix}
+    a^{1}_1 & \dots & a^{n}_1\\
+    \vdots & \ddots & \vdots \\
+    a^{n}_1 & \dots & a^{n}_n
+\end{pmatrix}\]
+es la denominada \textbf{matriz de cambio de base de B en B'}, pues estamos transformando las coordenadas del vector $w$ en la base $B$, que son $w=(x^1,\dots,x^n)$, en las coordenadas en la base $B'$, que son $w=(\tilde{x}^1,\dots \tilde{x}^n)$.\\ \\
+\noindent Este caso lo hemos hecho detallando los pasos a seguir. Los siguientes cambios de base lo haremos con notación de Einstein.
+\subsubsection*{Cambio de base de formas}
+Vamos a usar ahora notación de Einstein para simplificar la notación.\\
+Sea $V^*$ el espacio dual de u espacio vectorial $V$, con bases duales $B^*=\curlybraces{f^1,\dots,f^n}$ y\\ $\tilde{B}^{*}=\curlybraces{\tilde{f}^{1},\dots,\tilde{f}^{n}}$. Consideremos un elemento $g\in V^*$, que podemos escribir en amabas bases como,
+\[g=x_if^i\]
+\[g=\tilde{x}_i\tilde{f}^{i}\]
+que podemos igualar,
+\[x_if^i=\tilde{x}_i\tilde{f}^{i}\]
+Expresando los elementos de la base $B^*$ en función de los de la base $B^{*'}$ tenemos,
+\[\left\lbrace\begin{matrix}
+    f^i=b_{j}^i\tilde{f}^{j}
+\end{matrix}\right.\]
+Sustituyendo,
+\[x_if^i=x_ib_{j}^i\tilde{f}^{j}=\tilde{x}_i\tilde{f}^{i}\]
+\noindent Luego, lo que acompaña a cada vector deberá ser igual, es decir,
+\[\left\lbrace
+\tilde{x}_i=\sum\limits_ja_{i}^jx_j\equiv b_{i}^jx_j
+\right.\]
+\noindent o escrito en forma matricial como,
+\[\begin{pmatrix}
+    \tilde{x}_1\\
+    \vdots \\
+    \tilde{x}_n
+\end{pmatrix}=\begin{pmatrix}
+    b_{1}^1 & \dots & b_{n}^1\\
+    \vdots & \ddots & \vdots \\
+    b_{1}^n & \dots & b_{n}^n
+\end{pmatrix}=\begin{pmatrix}
+    x_1\\
+    \vdots \\
+    x_n
+\end{pmatrix}\]
+donde la matriz
+ \[b_{j}^i=\begin{pmatrix}
+    b_{1}^1 & \dots & b_{n}^1\\
+    \vdots & \ddots & \vdots \\
+    b_{1}^n & \dots & b_{n}^n
+\end{pmatrix}\]
+es la denominada \textbf{matriz de cambio de base de} $\mathbf{B^*}$\textbf{ en }$\mathbf{B'}$, pues estamos transformando las coordenadas de la aplicación lineal $g$ en la base $B^*$, que son $\curlybraces{x_i}$, en las coordenadas en la base $B^{*'}$, que son $\curlybraces{\tilde{x}_i}$.
+\begin{remark}
+   \noindent Sabemos que por la condición de base dual tenemos,
+    \[f^i(v_j)=\delta_i^j,\hspace{5mm}\tilde{f}^i(\tilde{v}_j)=\delta^j_i\]
+   \noindent Luego, 
+    \[\begin{array}{rl}
+         \delta^j_i & =f^i(v_j)=f^i(a_j^k\tilde{v}_k)=a_j^kf^i(\tilde{v}_k)=a_j^k(b_l^i\tilde{f}^l)(\tilde{v}_k)  \\
+         & =a_j^kb_l^i\tilde{f}^l(\tilde{v}_k)=a_j^kb_l^i\delta_k^l=a_j^kb_k^i
+    \end{array}\]
+   \noindent Por tanto, tenemos que $a_j^kb_k^i=\delta_i^j$, luego, podemos decir que una es la inversa de la otra.
+\end{remark}
+
+\subsubsection*{Cambio de base en tensores de tipo (1,1)\label{CambioBasesTensores(1,1)}}
+Tomando los espacios vectoriales y bases anteriores. Sea $\Omega^{1,1}(V)$ un espacio vectorial con bases $B^{1,1}=\curlybraces{\ptensor{v_{i}}{f^{j}}}$ y $\tilde{B}^{1,1}=\curlybraces{\ptensor{\tilde{v}_{l}}{\tilde{f}^{k}}}$. Tomando un elemento $w\in\Omega^{1,1}(V)$ que lo escribimos en función de ambas bases,
+\[w=w^i_jv_{i}\otimes f^{j}\]
+\[w=\tilde{w}_l^k\ptensor{\tilde{v}_{l}}{\tilde{f}^{k}}\]
+
+\noindent Vamos a partir de las matrices anteriores, tal que
+
+\[w^i_j\ptensor{v_i}{f^j}=w^i_j(a_i^r\tilde{v}_r)\otimes (b_l^i\tilde{f}^l)=w^i_j(a_i^rb_l^j)\ptensor{\tilde{v}_r}{\tilde{f}^l}\]
+
+\noindent Luego, si anulamos el $w^i_j$, tenemos
+
+\[\ptensor{v_i}{f^j}=(a_i^rb_l^j)\ptensor{\tilde{v_r}}{\tilde{f^l}}\equiv w_j^i=(a_i^rb_l^j)\tilde{w}_l^r\]
+
+\noindent donde $a^{r}_i$ y $b_{l}^j$ son matrices de cambio de base, tanto de vectores como de formas y $A\equiv a^{r}_ib_{k}^j$ será \textbf{la matriz de cambio de base de los tensores de tipo (1,1)}.
+
+\subsubsection*{Cambio de base en tensores de tipo (r,s)}
+
+Tomando los espacios y bases anteriores. Sea $\Omega^{r,s}(V)$ un espacio vectorial, con bases $B^{r,s}=\curlybraces{v_{i_1}\otimes\dots\otimes v_{i_r}\otimes f^{j_1}\otimes\dots\otimes f^{j_s}}$ y $\Tilde{B}^{r,s}=\curlybraces{\tilde{v}_{l_1}\otimes\dots\otimes \tilde{v}_{l_r}\otimes \tilde{f}^{k_1}\otimes\dots\otimes \tilde{f}^{k_s}}$. Repitiendo todo lo anterior, podemos ponerlo en forma general, tal que
+
+\[\Tilde{\Omega}^{j_1,\dots,j_s}_{i_1,\dots,i_k}=\Omega^{l_1,\dots,l_s}_{r_1,\dots,r_k}a^{j_1}_{l_1}a^{j_2}_{l_2}\dots a^{j_s}_{l_s}b^{r_1}_{i_1}b^{r_2}_{i_2}\dots b^{r_k}_{i_k}\]
+
+\noindent donde $M\equiv a^{j_1}_{l_1}a^{j_2}_{l_2}\dots a^{j_s}_{l_s}b^{r_1}_{i_1}b^{r_2}_{i_2}\dots b^{r_k}_{i_k}$ es la \textbf{matriz de cambio de base de los tensores de tipo (r,s)}.
+\subsection{Invariantes} 
+Dado que los tensores suelen describirse en términos respecto de ciertas bases, cuando estos términos no dependen de la base empleada, los tensores se llamarán \textbf{invariantes}. O en otras palabras, los tensores que no se transforman frente a un cambio de base, serán los que llamaremos \textbf{invariantes}.\\ \\
+Vamos a intentar ilustrar este concepto definiendo un tensor invariante de tipo (1,1), denominado \textit{traza}, que es un invariante conocido de las matrices. Si tenemos un tensor $A=A_j^i\ptensor{e_i}{f^j}$ que definimos como
+\[\text{traza de }A=\rm{tr}A=A^i_i\]
+siendo la suma de los elementos de la diagonal principal de la matriz $(A^i_j)$. No es a priori evidente que hayamos definido algo que depende únicamente de $A$, ya que los $A_j^i$ dependen no solo de $A$ sino también de la base $\curlybraces{e_i}$. Para mostrar que $\rm{tr} A$ es un número determinado enteramente por $A$ mismo y no por los $e_i$ también, debemos demostrar la invariancia; es decir, si $A$ se expresa en términos de otra base ${\tilde{e}_i}$, entonces la fórmula correspondiente en los nuevos componentes da el mismo número que antes. Así, escribimos $A=\tilde{A}^i_j\ptensor{\tilde{e}_i}{\tilde{f}^j}=A^i_j\ptensor{e_i}{f^j}$ y veremos que $A^i_j=\tilde{A}^i_j$. Usando la misma notación de cambios de base que hemos visto en el apartado anterior, tenemos la ley de transformación siguiente,
+\[\tilde{A}^n_m=A^i_ja_m^jb_i^n\]
+de lo cual se obtiene
+\[\tilde{A}^i_i=A^p_ja^j_ib^i_p=A^p_j\delta^j_p=A^i_i\]
+Queda demostrado. Luego, tenemos la proposición,
+\begin{proposition}
+    La traza de un tensor de tipo (1,1) es un invariante.
+\end{proposition}
+Para ver que no todas las expresiones en términos de las componentes de un tensor necesariamente serán un invariante, veamos el siguiente ejemplo. 
+\begin{example}
+    Supongamos $d=2$ y $A=\ptensor{e_1}{e_1}+\ptensor{e_1}{e_2}$, un tensor de tipo (0,2). La expresión de $A_{ii}$ en este caso será $A_{11}+A_{22}$=1+0=1. Ahora consideramos una nueva base dada por $e_1=\tilde{e}_1+\tilde{e}_2$ y $e_2=\tilde{e}_2$, entonces
+    \[\begin{array}{rrl}
+        A & = & (\tilde{e}_1+\tilde{e}_2)\otimes(\tilde{e}_1+\tilde{e}_2)+(\tilde{e}_1+\tilde{e}_2)\otimes\tilde{e}_2 \\
+         & = & \tilde{e}_1\otimes\tilde{e}_1+2\tilde{e}_1\otimes\tilde{e}_2+\tilde{e}_2\otimes\tilde{e}_1+2\tilde{e}_2\otimes\tilde{e}_2
+    \end{array}\]
+    de la cuál se obtiene que $\tilde{A}_{ii}=\tilde{A}_{11}+\tilde{A}_{22}=1+2=3$. Por tanto es diferente a la base primera, luego no es un invariante.
+\end{example}
+\subsubsection*{Nota Final}
+    Finalmente diremos que un tensor es todo aquel objeto matemático que satisfaga los cambios de base, o en otras palabras,\\
+    
+    \textit{Un tensor es todo objeto matemático que transforma como un tensor}.
+\section*{Ejemplos de Tensores en Física}
+En este apartado vamos a ver algunos ejemplos de tensores que se usan en física, pero ¿realmente son tensores?
+%\subsection*{Tensor de Inercia}
+%El tensor de inercia es un tensor muy usado en la mecánica clásica de los sólidos rígidos. \\
+%(No hacer caso a los subíndices, pues en física no aportan información del tipo del tensor, luego veremos su traducción formal y veremos su tipo y algunas propiedades).\\
+%Definimos el momento angular $\vec{L}$ como
+%\[\begin{array}{rrl}
+ %   \vec{L} & = & \int dm~\vec{r}\times\vec{v}=\int dm\brackets{r^2\vec{\omega}-(\vec{r}\cdot\vec{\omega})\vec{r}} \\
+  %   & = & \int dm\brackets{r^2\sum\limits_{i=1}^3\omega_i\hat{e}_i-(\vec{r}\cdot\vec{\omega})\sum\limits_{i=1}^3x_i\hat{e}_i}\\
+ %    & = & \int dm\sum\limits_{i=1}^3\brackets{\omega_ir^2-x_i(\vec{r}\cdot\vec{\omega})}\hat{e}_i\\
+  %   & = & \int dm\sum\limits_{i=1}^3\brackets{\omega_ir^2\sum\limits_{j=1}^3\delta_{ij}-x_i\sum\limits_{j=1}^3x_j\omega_j}\hat{e}_i\\
+   %  & = & \int dm\sum\limits_{i=1}^3\brackets{\sum\limits_{j=1}^3r^2\omega_j\delta_{ij}-x_ix_j\omega_j}\hat{e}_i\\
+    % & = & \int dm\sum\limits_{i=1}^3\sum\limits_{j=1}^3\brackets{r^2\omega_j\delta_{ij}-x_ix_j\omega_j}\hat{e}_i\\
+     %& = & \sum\limits_{i=1}^3\sum\limits_{j=1}^3\brackets{\int dm(r^2\delta_{ij}-x_ix_j)}\omega_j\hat{e}_i
+%\end{array}\]
+%donde $\vec{\omega}$ es la velocidad angular, $\vec{r}$ es el vector de posición, $\curlybraces{\hat{e}_i}$ es la base y $\vec{r}\cdot\vec{\omega}$ es el producto escalar. Luego, definimos,
+%\[I_{ij}=\int dm(r^2\delta_{ij}-x_ix_j)\]
+%Luego, $\vec{L}=I\cdot\vec{\omega}$, o bien
+%\[\begin{pmatrix}
+ %   L_1\\
+  %  L_2\\
+   % L_3
+%\end{pmatrix}=\begin{pmatrix}
+ %   I_{11} & I_{21} & I_{31}\\
+  %  I_{12} & I_{22} & I_{32}\\
+   % I_{13} & I_{23} & I_{33}
+%\end{pmatrix}=\begin{pmatrix}
+ %   \omega_1\\
+  %  \omega_2\\
+   % \omega_3
+%\end{pmatrix}\]
+%donde $I$ es el denominado \textbf{tensor de inercia}. 
+%\\
+%A primera vista, se podría decir que el tensor de inercia es un tensor de tipo (0,2), pero vamos a verlo de forma cuidadosa rehaciendo el cálculo anterior con objetos matemáticos, para ello vamos a renombrar lo siguiente:
+%\[\begin{array}{rcl}
+    %\hat{e}_i & \equiv & B=\curlybraces{e_i}\\
+    %\vec{r} & \equiv & x=x^ie_i \\
+    %\vec{L} & \equiv & L=L^ie_i\\
+    %r^2 & \equiv & \scalar{x}{x}=x^ig_{ij}x^j \\
+    %\vec{\omega} & \equiv & \omega=\omega^ie_i \\
+   % \vec{r}\cdot\vec{\omega} & \equiv & \scalar{x}%{\omega}=x^ig_{ij}\omega^j
+%\end{array}\]
+%Luego, hacemos el desarrollo anterior, pero con esta notación,
+%\[\begin{array}{rll}
+    %L^ie_i & = & \int dm~\brackets{(x^rg_{rl}x^l)\omega^ie_i-%(x^kg_{kj}\omega^j)x^ie_i} \\
+     %& = & \int %dm~\brackets{x^rg_{rl}x^l\sum\limits_{j=1}^3\omega^i\delt%a_{i}^j-}e_i
+%\end{array}\]
+
+\subsubsection{Tensor métrico de Minkowski}
+
+Vamos a describir el tensor métrico del espacio de Minkowki. Para ello, vamos a ver primero como definimos los vectores en este espacio.\\
+El espacio de Minkowski, $M$, es un espacio de 4 dimensiones, las tres espaciales y la temporal, pues el tiempo no es independiente del espacio, así, si tomamos una base $B=\curlybraces{e_0,e_1,e_2,e_3}$, tendremos que los vectores en este espacio, $m\in M$, se definen como
+\[m=m^0e_0+m^1e_1+m^2e_2+m^3e_3\]
+Si trabajamos en coordenadas cartesianas, tendremos que $m=(ct, x,y,z)$, donde\\ $m^1=x,~m^2=y,~m^3=z,~m^0=ct$ e introducimos la constante $c$, siendo la velocidad de la luz, en la coordenada cero para que todas las coordenadas tengan las mismas unidades.\\
+Para definir el tensor métrico, tomamos un tensor de orden 2, $g_{\mu\nu}$, de forma que $g_{\mu\nu}A^{\mu}A^{\nu}$ es un invariante. En particular, si se elige el tensor como $ds^2=g_{\mu\nu}dx^{\mu}dx^{\nu}$, es decir, que sea el cuadrado del diferencial de longitud, entonces al tensor $g_{\mu\nu}$ se le denomina \textbf{tensor métrico}, pero todavía tenemos que llegar a que sea de Minkowski. Podemos definir la métrica del espacio de Minkowski como
+\[-c^2t^2+x^2+y^2+z^2=cte\]
+de forma que ya podemos obtener el tensor métrico de Minkowski, puesto que podemos obtener un diferencial de longitud, 
+\[ds^2=-c^2dt^2+dx^2+dy^2+dz^2=-c^2dt^2+d^2\vec{r}\]
+usando la definición de tensor métrico, $ds^2=g_{\mu\nu}dx^{\mu}dx^{\nu}$, podemos obtener la forma de $g_{\mu\nu}$, pues
+\[ds^2=-(cdt)^2+dx^2+dy^2+dz^2=\begin{pmatrix}
+    -1 & 0 & 0 & 0\\
+    0 & 1 & 0 & 0\\
+    0 & 0 & 1 & 0\\
+    0 & 0 & 0 & 1
+\end{pmatrix}\begin{pmatrix}
+    cdt & dx & dy & dz
+\end{pmatrix}\begin{pmatrix}
+    cdt & dx & dy & dz
+\end{pmatrix}\]
+
+
+
+
+
+
+
+
+
+
+%En esencia, las transformadas de Lorentz son un cambio de base que preserva la métrica del espacio, de modo que, al pasar de un sistema de referencia inercial $K$ a otro $K'$ que se mueve a velocidad constante respecto del otro, se conserve la métrica del espacio $M$. Es decir, sea $m\in M$, $m'\in M'$, $B=\curlybraces{e_0,e_1,e_2,e_3}$ y $B'=\curlybraces{e_0',e_1',e_2',e_3'}$,
+%\[m=(ct,x,y,z)\rightsquigarrow m'=(ct',x',y',z')\]
+%Para encontrar estas transformadas, tomamos 
+%\[\begin{pmatrix}
+ %   ct\\
+  %  x\\
+   % y\\
+    %z
+%\end{pmatrix}=\Lambda\begin{pmatrix}
+ %   ct'\\
+  %  x'\\
+   % y'\\
+    %z'
+%\end{pmatrix}\]
+%donde $\Lambda$ es la matriz de Lorentz y puede verse que para el movimiento a lo largo del eje X, la matriz de Lorentz queda
+%\[\Lambda=\begin{pmatrix}
+ %   \gamma & -\gamma\beta & 0 & 0\\
+  %  -\gamma\beta & \gamma & 0 & 0\\
+   % 0 & 0 & 1 & 0\\
+    %0 & 0 & 0 & 1
+%\end{pmatrix}\]
+%donde $\gamma=\frac{1}{\sqrt{1-\frac{v^2}{c^2}}}$, llamado factor de Lorentz, y $\beta=\frac{v}{c}$, que es la velocidad relativa $v$ entre ambos sistemas de referencia dividida entre la velocidad de la luz $c$. Por tanto, como la matriz $\Lambda$ es el operador que cambia de la base $B$ a la base $B'$ tal que la métrica del espacio sea invariante, 
+
+
+
+
+
+
+ \label{Bibliography}
+	\lhead{\emph{Bibliograf\'ia}}
+	\bibliographystyle{plainnat} 
+	\bibliography{Mibiblioteca} 
+ 
+
+\end{document}
+
+
+%%% Local Variables:
+%%% mode: latex
+%%% TeX-master: t
+%%% End:
