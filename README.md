@@ -22,13 +22,6 @@ My contributions include:
 - Organizing the material into a coherent pedagogical structure  
 - Incorporating examples and clarifications to improve readability  
 
-## 🔒 Repository status
-This repository is **private** until explicit permission for publication is confirmed by the supervising professor.
-
-No public distribution of the PDF or source files will be made without authorization.
-
-If permission is granted, the repository may be made public in accordance with co-authorship rights and academic transparency.
-
 ## ⚠️ Copyright Notice
 The content of this repository is protected under Spanish and international copyright law.
 
